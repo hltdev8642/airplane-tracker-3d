@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Airplane Tracker with Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+        body.theme-day {
+            background: #87CEEB;
+            color: #333;
+        }
+        body.theme-night {
+            background: #0a0a1a;
+            color: #fff;
+        }
+        body.theme-retro {
+            background: #000800;
+            color: #00ff00;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 280px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .theme-day #info-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #info-panel {
+            background: rgba(0, 20, 40, 0.85);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #info-panel {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        #info-panel h2 {
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .theme-day #info-panel h2 { color: #0066cc; }
+        .theme-night #info-panel h2 { color: #00d4ff; }
+        .theme-retro #info-panel h2 { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+
+        .stat {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+        .stat-label {
+            opacity: 0.7;
+        }
+        .stat-value {
+            font-weight: bold;
+        }
+        .theme-day .stat-value { color: #00aa44; }
+        .theme-night .stat-value { color: #00ff88; }
+        .theme-retro .stat-value { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+
+        #selected-plane {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 300px;
+            display: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .theme-day #selected-plane {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 150, 0, 0.3);
+        }
+        .theme-night #selected-plane {
+            background: rgba(0, 20, 40, 0.85);
+            border: 1px solid rgba(255, 150, 0, 0.3);
+        }
+        .theme-retro #selected-plane {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+        }
+        #selected-plane h3 {
+            margin-bottom: 15px;
+        }
+        .theme-day #selected-plane h3 { color: #cc6600; }
+        .theme-night #selected-plane h3 { color: #ffaa00; }
+        .theme-retro #selected-plane h3 { color: #00ff00; }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            max-width: 95vw;
+            transition: all 0.3s ease;
+        }
+        .theme-day #controls {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .theme-night #controls {
+            background: rgba(0, 20, 40, 0.85);
+        }
+        .theme-retro #controls {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+        }
+
+        button {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+        .theme-day button {
+            background: linear-gradient(135deg, #0088ff, #0066cc);
+            color: #fff;
+        }
+        .theme-night button {
+            background: linear-gradient(135deg, #0066cc, #0044aa);
+            color: #fff;
+        }
+        .theme-retro button {
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .theme-retro button:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        button.active {
+            background: #00aa00 !important;
+        }
+        .theme-retro button.active {
+            background: rgba(0, 255, 0, 0.3) !important;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0 10px;
+            border-right: 1px solid rgba(128, 128, 128, 0.3);
+        }
+        .control-group:last-child {
+            border-right: none;
+        }
+        .control-label {
+            font-size: 0.75em;
+            opacity: 0.7;
+            margin-right: 5px;
+        }
+
+        #altitude-slider-container {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .theme-day #altitude-slider-container {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .theme-night #altitude-slider-container {
+            background: rgba(0, 20, 40, 0.85);
+        }
+        .theme-retro #altitude-slider-container {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+        }
+
+        #altitude-slider-container h4 {
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #altitude-slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 30px;
+            height: 150px;
+            cursor: pointer;
+        }
+
+        #altitude-value {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        #altitude-legend {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .theme-day #altitude-legend {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .theme-night #altitude-legend {
+            background: rgba(0, 20, 40, 0.85);
+        }
+        .theme-retro #altitude-legend {
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid #00ff00;
+        }
+        #altitude-legend h4 {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.8em;
+        }
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        select {
+            padding: 6px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        .theme-day select {
+            background: #fff;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+        .theme-night select {
+            background: #1a3a5a;
+            border: 1px solid #0066cc;
+            color: #fff;
+        }
+        .theme-retro select {
+            background: #001a00;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body class="theme-day">
+    <div id="container"></div>
+
+    <div id="info-panel">
+        <h2>3D Flight Tracker</h2>
+        <div class="stat">
+            <span class="stat-label">Aircraft Tracked:</span>
+            <span class="stat-value" id="plane-count">0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Last Update:</span>
+            <span class="stat-value" id="last-update">--:--:--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Center:</span>
+            <span class="stat-value" id="center-coords">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Map Zoom:</span>
+            <span class="stat-value" id="map-zoom">9</span>
+        </div>
+    </div>
+
+    <div id="selected-plane">
+        <h3>Selected Aircraft</h3>
+        <div class="stat">
+            <span class="stat-label">Callsign:</span>
+            <span class="stat-value" id="sel-callsign">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Altitude:</span>
+            <span class="stat-value" id="sel-altitude">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Speed:</span>
+            <span class="stat-value" id="sel-speed">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Track:</span>
+            <span class="stat-value" id="sel-track">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Vert Rate:</span>
+            <span class="stat-value" id="sel-vertrate">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Squawk:</span>
+            <span class="stat-value" id="sel-squawk">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Position:</span>
+            <span class="stat-value" id="sel-position">--</span>
+        </div>
+    </div>
+
+    <div id="altitude-slider-container">
+        <h4>Altitude Scale</h4>
+        <input type="range" id="altitude-slider" min="1" max="100" value="30" orient="vertical">
+        <div id="altitude-value">30x</div>
+    </div>
+
+    <div id="altitude-legend">
+        <h4>Altitude</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00ff00;"></div>
+            <span id="legend-low">&lt; 5,000 ft</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffff00;"></div>
+            <span id="legend-mid1">5,000 - 15,000 ft</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff8800;"></div>
+            <span id="legend-mid2">15,000 - 30,000 ft</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff0088;"></div>
+            <span id="legend-high">&gt; 30,000 ft</span>
+        </div>
+    </div>
+
+    <div id="controls">
+        <div class="control-group">
+            <span class="control-label">Theme:</span>
+            <select id="theme-select" onchange="changeTheme(this.value)">
+                <option value="day">Day</option>
+                <option value="night">Night</option>
+                <option value="retro">Retro 80s</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Units:</span>
+            <select id="units-select" onchange="changeUnits(this.value)">
+                <option value="imperial">Imperial (ft/kts)</option>
+                <option value="metric">Metric (m/km/h)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Map:</span>
+            <button onclick="mapZoomIn()">+</button>
+            <button onclick="mapZoomOut()">-</button>
+            <button onclick="panMap('up')">↑</button>
+            <button onclick="panMap('down')">↓</button>
+            <button onclick="panMap('left')">←</button>
+            <button onclick="panMap('right')">→</button>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Camera:</span>
+            <button onclick="cameraZoomIn()">Zoom+</button>
+            <button onclick="cameraZoomOut()">Zoom-</button>
+            <button onmousedown="startRotate('left')" onmouseup="stopRotate()" onmouseleave="stopRotate()">◄</button>
+            <button onmousedown="startRotate('right')" onmouseup="stopRotate()" onmouseleave="stopRotate()">►</button>
+        </div>
+
+        <div class="control-group">
+            <button onclick="resetCamera()">Reset</button>
+            <button onclick="toggleAutoRotate()" id="btn-rotate">Auto Rotate</button>
+            <button onclick="toggleTrails()" id="btn-trails">Trails</button>
+            <button onclick="toggleLabels()" id="btn-labels">Labels</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Configuration
+        const DATA_URL = '/dump1090/data/aircraft.json';
+        const REFRESH_INTERVAL = 1000;
+        const MAP_GROUND_SIZE = 400;
+        const TILES_PER_SIDE = 6;
+        const BASE_ALT_SCALE = 0.00001;
+
+        // State
+        let scene, camera, renderer;
+        let airplanes = new Map();
+        let labels = [];
+        let showLabels = true;
+        let showTrails = true;
+        let autoRotate = false;
+        let selectedPlane = null;
+        let centerLat = 0, centerLon = 0;
+        let centerInitialized = false;
+
+        // Interpolation state
+        const INTERPOLATION_DELAY = 2000; // 2 second delay
+        const INTERPOLATION_FPS = 30;
+        let aircraftDataBuffer = new Map(); // hex -> array of {timestamp, data}
+        let lastInterpolationTime = 0;
+
+        // Map state
+        let currentZoom = 9;
+        const MIN_ZOOM = 6;
+        const MAX_ZOOM = 12;
+        let mapTiles = [];
+        let tileCache = new Map();
+
+        // Altitude scale
+        let altitudeScale = 30 * BASE_ALT_SCALE;
+
+        // Units: 'imperial' or 'metric'
+        let currentUnits = 'imperial';
+
+        // Theme: 'day', 'night', 'retro'
+        let currentTheme = 'day';
+
+        // Camera controls
+        let cameraAngle = 0;
+        let cameraHeight = 80;
+        let cameraDistance = 150;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            updateSceneBackground();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            updateCameraPosition();
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(50, 100, 50);
+            scene.add(directionalLight);
+
+            // Ground placeholder
+            createGroundPlaceholder();
+
+            // Controls
+            setupControls();
+
+            // Window resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Mouse interaction
+            renderer.domElement.addEventListener('click', onMouseClick);
+
+            // Altitude slider
+            const slider = document.getElementById('altitude-slider');
+            slider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                altitudeScale = value * BASE_ALT_SCALE;
+                document.getElementById('altitude-value').textContent = value + 'x';
+                updateAllAircraftPositions();
+            });
+
+            // Start animation
+            animate();
+
+            // Fetch data
+            fetchData();
+            setInterval(fetchData, REFRESH_INTERVAL);
+        }
+
+        function updateSceneBackground() {
+            if (currentTheme === 'day') {
+                scene.background = new THREE.Color(0x87CEEB);
+                scene.fog = new THREE.Fog(0x87CEEB, 300, 800);
+            } else if (currentTheme === 'night') {
+                scene.background = new THREE.Color(0x0a0a1a);
+                scene.fog = new THREE.Fog(0x0a0a1a, 300, 800);
+            } else if (currentTheme === 'retro') {
+                scene.background = new THREE.Color(0x000800);
+                scene.fog = new THREE.Fog(0x000800, 300, 800);
+            }
+        }
+
+        function changeTheme(theme) {
+            currentTheme = theme;
+            document.body.className = 'theme-' + theme;
+            updateSceneBackground();
+
+            // Clear tile cache for theme change to force reload with new style
+            tileCache.clear();
+
+            // Reload map tiles with appropriate style
+            loadMapTiles();
+
+            // Recreate all airplanes with new style (wireframe vs solid)
+            recreateAllAirplanes();
+        }
+
+        function recreateAllAirplanes() {
+            // Store current aircraft data
+            const aircraftData = [];
+            for (const [hex, plane] of airplanes.entries()) {
+                aircraftData.push({...plane.userData});
+                // Remove old plane and its trails/lines
+                scene.remove(plane);
+                if (plane.userData.trail) scene.remove(plane.userData.trail);
+                if (plane.userData.altLine) scene.remove(plane.userData.altLine);
+            }
+            airplanes.clear();
+
+            // Recreate with new theme style
+            aircraftData.forEach(data => {
+                if (!data.lat || !data.lon) return;
+                const plane = createAirplane(data);
+                const pos = latLonToXZ(data.lat, data.lon);
+                const alt = (data.altitude || 0) * altitudeScale;
+                plane.position.set(pos.x, alt, pos.z);
+
+                if (data.track !== undefined) {
+                    plane.rotation.y = (-data.track * Math.PI / 180) + Math.PI;
+                }
+
+                updateAltitudeLine(plane);
+                scene.add(plane);
+                airplanes.set(data.hex, plane);
+            });
+
+            updateLabels();
+        }
+
+        function changeUnits(units) {
+            currentUnits = units;
+            updateLegendUnits();
+            updateLabels();
+            if (selectedPlane) {
+                selectPlane(selectedPlane);
+            }
+        }
+
+        function updateLegendUnits() {
+            if (currentUnits === 'imperial') {
+                document.getElementById('legend-low').textContent = '< 5,000 ft';
+                document.getElementById('legend-mid1').textContent = '5,000 - 15,000 ft';
+                document.getElementById('legend-mid2').textContent = '15,000 - 30,000 ft';
+                document.getElementById('legend-high').textContent = '> 30,000 ft';
+            } else {
+                document.getElementById('legend-low').textContent = '< 1,524 m';
+                document.getElementById('legend-mid1').textContent = '1,524 - 4,572 m';
+                document.getElementById('legend-mid2').textContent = '4,572 - 9,144 m';
+                document.getElementById('legend-high').textContent = '> 9,144 m';
+            }
+        }
+
+        function formatAltitude(altFeet) {
+            if (currentUnits === 'imperial') {
+                return Math.round(altFeet).toLocaleString() + ' ft';
+            } else {
+                const meters = Math.round(altFeet * 0.3048);
+                return meters.toLocaleString() + ' m';
+            }
+        }
+
+        function formatSpeed(speedKnots) {
+            if (currentUnits === 'imperial') {
+                return Math.round(speedKnots) + ' kts';
+            } else {
+                const kmh = Math.round(speedKnots * 1.852);
+                return kmh + ' km/h';
+            }
+        }
+
+        function formatVertRate(rateFpm) {
+            if (currentUnits === 'imperial') {
+                return Math.round(rateFpm) + ' ft/min';
+            } else {
+                const mpm = Math.round(rateFpm * 0.3048);
+                return mpm + ' m/min';
+            }
+        }
+
+        function createGroundPlaceholder() {
+            const geometry = new THREE.PlaneGeometry(MAP_GROUND_SIZE, MAP_GROUND_SIZE);
+            const material = new THREE.MeshBasicMaterial({
+                color: currentTheme === 'retro' ? 0x001100 : 0x1a4d1a,
+                side: THREE.DoubleSide
+            });
+            const ground = new THREE.Mesh(geometry, material);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.1;
+            ground.name = 'groundPlaceholder';
+            scene.add(ground);
+        }
+
+        function getTileUrl(x, y, zoom) {
+            if (currentTheme === 'retro') {
+                // Use Stamen Toner Lite for retro theme - will be inverted to green
+                return `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/${zoom}/${x}/${y}.png`;
+            } else if (currentTheme === 'night') {
+                // Use CartoDB dark tiles for night theme
+                return `https://a.basemaps.cartocdn.com/dark_all/${zoom}/${x}/${y}.png`;
+            } else {
+                // Standard OSM for day theme
+                const servers = ['a', 'b', 'c'];
+                const server = servers[Math.abs(x + y) % 3];
+                return `https://${server}.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+            }
+        }
+
+        // Invert and colorize image for retro theme
+        function invertToGreen(image) {
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Get grayscale value (inverted)
+                const gray = 255 - (data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114);
+                // Convert to green
+                data[i] = 0;           // R
+                data[i+1] = gray;      // G
+                data[i+2] = 0;         // B
+                // Keep alpha
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            return canvas;
+        }
+
+        function latLonToTile(lat, lon, zoom) {
+            const n = Math.pow(2, zoom);
+            const x = Math.floor((lon + 180) / 360 * n);
+            const latRad = lat * Math.PI / 180;
+            const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n);
+            return { x, y };
+        }
+
+        function tileToLatLon(x, y, zoom) {
+            const n = Math.pow(2, zoom);
+            const lon = x / n * 360 - 180;
+            const latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n)));
+            const lat = latRad * 180 / Math.PI;
+            return { lat, lon };
+        }
+
+        function loadMapTiles() {
+            if (!centerInitialized) return;
+
+            // Clear existing tiles
+            mapTiles.forEach(tile => scene.remove(tile));
+            mapTiles = [];
+
+            const centerTile = latLonToTile(centerLat, centerLon, currentZoom);
+            const halfTiles = Math.floor(TILES_PER_SIDE / 2);
+
+            // Calculate bounds - tiles go from (centerTile - halfTiles) to (centerTile - halfTiles + TILES_PER_SIDE - 1)
+            // So bounds are from tile (centerTile - halfTiles) top-left corner
+            // to tile (centerTile - halfTiles + TILES_PER_SIDE) top-left corner (which is bottom-right of last tile)
+            const startTileX = centerTile.x - halfTiles;
+            const startTileY = centerTile.y - halfTiles;
+            const topLeft = tileToLatLon(startTileX, startTileY, currentZoom);
+            const bottomRight = tileToLatLon(startTileX + TILES_PER_SIDE, startTileY + TILES_PER_SIDE, currentZoom);
+
+            window.mapBounds = {
+                north: topLeft.lat,
+                south: bottomRight.lat,
+                east: bottomRight.lon,
+                west: topLeft.lon
+            };
+
+            const tileSize = MAP_GROUND_SIZE / TILES_PER_SIDE;
+            const loader = new THREE.TextureLoader();
+            loader.crossOrigin = 'anonymous';
+
+            for (let dy = 0; dy < TILES_PER_SIDE; dy++) {
+                for (let dx = 0; dx < TILES_PER_SIDE; dx++) {
+                    const tileX = centerTile.x - halfTiles + dx;
+                    const tileY = centerTile.y - halfTiles + dy;
+                    const cacheKey = `${currentTheme}-${currentZoom}-${tileX}-${tileY}`;
+
+                    const geometry = new THREE.PlaneGeometry(tileSize, tileSize);
+                    const material = new THREE.MeshBasicMaterial({
+                        color: currentTheme === 'retro' ? 0x001100 : 0x1a4d1a,
+                        side: THREE.DoubleSide
+                    });
+
+                    const tile = new THREE.Mesh(geometry, material);
+                    tile.rotation.x = -Math.PI / 2;
+
+                    const posX = (dx - halfTiles + 0.5) * tileSize;
+                    const posZ = (dy - halfTiles + 0.5) * tileSize;
+                    tile.position.set(posX, 0, posZ);
+
+                    scene.add(tile);
+                    mapTiles.push(tile);
+
+                    // Load texture
+                    if (tileCache.has(cacheKey)) {
+                        material.map = tileCache.get(cacheKey);
+                        material.color.setHex(0xffffff);
+                        material.needsUpdate = true;
+                    } else {
+                        const url = getTileUrl(tileX, tileY, currentZoom);
+
+                        if (currentTheme === 'retro') {
+                            // Load image manually to invert colors
+                            const img = new Image();
+                            img.crossOrigin = 'anonymous';
+                            img.onload = () => {
+                                const invertedCanvas = invertToGreen(img);
+                                const texture = new THREE.CanvasTexture(invertedCanvas);
+                                material.map = texture;
+                                material.color.setHex(0xffffff);
+                                material.needsUpdate = true;
+                                tileCache.set(cacheKey, texture);
+                            };
+                            img.src = url;
+                        } else {
+                            loader.load(url, (texture) => {
+                                material.color.setHex(0xffffff);
+                                material.map = texture;
+                                material.needsUpdate = true;
+                                tileCache.set(cacheKey, texture);
+                            });
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('map-zoom').textContent = currentZoom;
+            updateAllAircraftPositions();
+        }
+
+        function mapZoomIn() {
+            if (currentZoom < MAX_ZOOM) {
+                currentZoom++;
+                loadMapTiles();
+            }
+        }
+
+        function mapZoomOut() {
+            if (currentZoom > MIN_ZOOM) {
+                currentZoom--;
+                loadMapTiles();
+            }
+        }
+
+        // Map pan function
+        function panMap(direction) {
+            const zoomFactor = Math.pow(2, 12 - currentZoom);
+            const panAmount = 0.05 * zoomFactor;
+
+            switch(direction) {
+                case 'up': centerLat += panAmount; break;
+                case 'down': centerLat -= panAmount; break;
+                case 'left': centerLon -= panAmount; break;
+                case 'right': centerLon += panAmount; break;
+            }
+
+            document.getElementById('center-coords').textContent =
+                `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+
+            loadMapTiles();
+        }
+
+        function latLonToXZ(lat, lon) {
+            if (!window.mapBounds) return { x: 0, z: 0 };
+            const bounds = window.mapBounds;
+            // X: longitude - West is negative X, East is positive X
+            const x = ((lon - bounds.west) / (bounds.east - bounds.west) - 0.5) * MAP_GROUND_SIZE;
+            // Z: latitude - North is negative Z, South is positive Z
+            // (lat - north) is negative for points north of center, divided by (south - north) which is negative
+            // Result: north points get negative Z, south points get positive Z
+            const z = ((lat - bounds.north) / (bounds.south - bounds.north) - 0.5) * MAP_GROUND_SIZE;
+            return { x, z };
+        }
+
+        function getAltitudeColor(altitude) {
+            if (currentTheme === 'retro') {
+                if (altitude < 5000) return 0x00ff00;
+                if (altitude < 15000) return 0x00cc00;
+                if (altitude < 30000) return 0x009900;
+                return 0x006600;
+            }
+            if (altitude < 5000) return 0x00ff00;
+            if (altitude < 15000) return 0xffff00;
+            if (altitude < 30000) return 0xff8800;
+            return 0xff0088;
+        }
+
+        function createAirplane(data) {
+            const group = new THREE.Group();
+            const color = getAltitudeColor(data.altitude || 0);
+            const isRetro = currentTheme === 'retro';
+
+            if (isRetro) {
+                // WIREFRAME MODE for retro 80s theme
+                const wireColor = 0x00ff00;
+                const wireMat = new THREE.LineBasicMaterial({ color: wireColor });
+
+                // Fuselage wireframe
+                const fuselageGeom = new THREE.BoxGeometry(0.8, 0.6, 4);
+                const fuselageEdges = new THREE.EdgesGeometry(fuselageGeom);
+                const fuselageWire = new THREE.LineSegments(fuselageEdges, wireMat);
+                group.add(fuselageWire);
+
+                // Nose cone wireframe
+                const noseGeom = new THREE.ConeGeometry(0.4, 1.2, 4);
+                const noseEdges = new THREE.EdgesGeometry(noseGeom);
+                const noseWire = new THREE.LineSegments(noseEdges, wireMat);
+                noseWire.rotation.x = -Math.PI / 2;
+                noseWire.position.z = 2.6;
+                group.add(noseWire);
+
+                // Wings wireframe
+                const wingGeom = new THREE.BoxGeometry(6, 0.1, 1.5);
+                const wingEdges = new THREE.EdgesGeometry(wingGeom);
+                const wingWire = new THREE.LineSegments(wingEdges, wireMat);
+                group.add(wingWire);
+
+                // Tail fin wireframe
+                const tailGeom = new THREE.BoxGeometry(0.1, 1.2, 0.8);
+                const tailEdges = new THREE.EdgesGeometry(tailGeom);
+                const tailWire = new THREE.LineSegments(tailEdges, wireMat);
+                tailWire.position.set(0, 0.6, -1.8);
+                group.add(tailWire);
+
+                // Horizontal stabilizer wireframe
+                const hStabGeom = new THREE.BoxGeometry(2.5, 0.1, 0.5);
+                const hStabEdges = new THREE.EdgesGeometry(hStabGeom);
+                const hStabWire = new THREE.LineSegments(hStabEdges, wireMat);
+                hStabWire.position.set(0, 0, -1.8);
+                group.add(hStabWire);
+
+                // Blinking light
+                const lightGeom = new THREE.SphereGeometry(0.2, 4, 4);
+                const lightMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true });
+                const positionLight = new THREE.Mesh(lightGeom, lightMat);
+                positionLight.position.set(0, 0, 2.6);
+                group.add(positionLight);
+
+                group.userData = {
+                    ...data,
+                    noseMaterial: null,
+                    positionLight: positionLight,
+                    lightPhase: Math.random() * Math.PI * 2,
+                    isWireframe: true
+                };
+            } else {
+                // SOLID MODE for day/night themes
+                const fuselageGeom = new THREE.CylinderGeometry(0.4, 0.6, 4, 8);
+                const fuselageMat = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x222222 });
+                const fuselage = new THREE.Mesh(fuselageGeom, fuselageMat);
+                fuselage.rotation.x = Math.PI / 2;
+                group.add(fuselage);
+
+                const noseGeom = new THREE.ConeGeometry(0.4, 1.2, 8);
+                const noseMat = new THREE.MeshPhongMaterial({ color: color, emissive: color, emissiveIntensity: 0.3 });
+                const nose = new THREE.Mesh(noseGeom, noseMat);
+                nose.rotation.x = -Math.PI / 2;
+                nose.position.z = 2.6;
+                group.add(nose);
+
+                const wingGeom = new THREE.BoxGeometry(5, 0.15, 1.5);
+                const wingMat = new THREE.MeshPhongMaterial({ color: 0xcccccc, emissive: 0x333333 });
+                const wings = new THREE.Mesh(wingGeom, wingMat);
+                group.add(wings);
+
+                const tailFinGeom = new THREE.BoxGeometry(0.15, 1.2, 1);
+                const tailFin = new THREE.Mesh(tailFinGeom, wingMat);
+                tailFin.position.set(0, 0.6, -1.8);
+                group.add(tailFin);
+
+                const hStabGeom = new THREE.BoxGeometry(2, 0.1, 0.6);
+                const hStab = new THREE.Mesh(hStabGeom, wingMat);
+                hStab.position.set(0, 0, -1.8);
+                group.add(hStab);
+
+                const engineGeom = new THREE.CylinderGeometry(0.25, 0.25, 0.8, 8);
+                const engineMat = new THREE.MeshPhongMaterial({ color: 0x444444 });
+                [-1.2, 1.2].forEach(xPos => {
+                    const engine = new THREE.Mesh(engineGeom, engineMat);
+                    engine.rotation.x = Math.PI / 2;
+                    engine.position.set(xPos, -0.3, 0.2);
+                    group.add(engine);
+                });
+
+                const lightGeom = new THREE.SphereGeometry(0.15, 8, 8);
+                const lightMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true });
+                const positionLight = new THREE.Mesh(lightGeom, lightMat);
+                positionLight.position.set(0, 0.3, -1.5);
+                group.add(positionLight);
+
+                group.userData = {
+                    ...data,
+                    noseMaterial: noseMat,
+                    positionLight: positionLight,
+                    lightPhase: Math.random() * Math.PI * 2,
+                    isWireframe: false
+                };
+            }
+
+            // Trail - DO NOT add to scene yet, will be managed separately
+            // Trail points will be collected in userData.trailPoints
+            group.userData.trail = null; // Will be created when needed
+            group.userData.trailPoints = [];
+            group.userData.trailMaterial = null;
+
+            // Altitude line - also deferred
+            group.userData.altLine = null;
+
+            return group;
+        }
+
+        // Create trail line for a plane (only when it has points)
+        function createTrailForPlane(plane) {
+            if (plane.userData.trail) return; // Already has trail
+
+            const isRetro = currentTheme === 'retro';
+            const color = isRetro ? 0x00ff00 : getAltitudeColor(plane.userData.altitude || 0);
+
+            const trailGeom = new THREE.BufferGeometry();
+            const trailPositions = new Float32Array(90 * 3); // 30 points max
+            trailGeom.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+            trailGeom.setDrawRange(0, 0);
+
+            const trailMat = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const trail = new THREE.Line(trailGeom, trailMat);
+            trail.frustumCulled = false;
+            scene.add(trail);
+
+            plane.userData.trail = trail;
+            plane.userData.trailMaterial = trailMat;
+        }
+
+        // Create altitude line for a plane
+        function createAltLineForPlane(plane) {
+            if (plane.userData.altLine) return;
+
+            const isRetro = currentTheme === 'retro';
+            const altLineGeom = new THREE.BufferGeometry();
+            const altLinePositions = new Float32Array(6);
+            altLineGeom.setAttribute('position', new THREE.BufferAttribute(altLinePositions, 3));
+            altLineGeom.setDrawRange(0, 0);
+
+            const altLineMat = new THREE.LineDashedMaterial({
+                color: isRetro ? 0x00ff00 : 0x888888,
+                dashSize: 2,
+                gapSize: 1,
+                transparent: true,
+                opacity: 0.4
+            });
+
+            const altLine = new THREE.Line(altLineGeom, altLineMat);
+            scene.add(altLine);
+
+            plane.userData.altLine = altLine;
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(DATA_URL);
+                const data = await response.json();
+                const now = Date.now();
+
+                if (data.aircraft && data.aircraft.length > 0) {
+                    if (!centerInitialized) {
+                        let sumLat = 0, sumLon = 0, count = 0;
+                        data.aircraft.forEach(ac => {
+                            if (ac.lat && ac.lon) {
+                                sumLat += ac.lat;
+                                sumLon += ac.lon;
+                                count++;
+                            }
+                        });
+                        if (count > 0) {
+                            centerLat = sumLat / count;
+                            centerLon = sumLon / count;
+                            centerInitialized = true;
+                            document.getElementById('center-coords').textContent =
+                                `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+                            loadMapTiles();
+                        }
+                    }
+
+                    // Store data in buffer with timestamp
+                    data.aircraft.forEach(ac => {
+                        if (!ac.lat || !ac.lon) return;
+
+                        if (!aircraftDataBuffer.has(ac.hex)) {
+                            aircraftDataBuffer.set(ac.hex, []);
+                        }
+
+                        const buffer = aircraftDataBuffer.get(ac.hex);
+                        buffer.push({ timestamp: now, data: {...ac} });
+
+                        // Keep only last 5 seconds of data
+                        while (buffer.length > 0 && buffer[0].timestamp < now - 5000) {
+                            buffer.shift();
+                        }
+                    });
+
+                    // Clean up old aircraft
+                    const currentHexes = new Set(data.aircraft.map(ac => ac.hex));
+                    for (const [hex, buffer] of aircraftDataBuffer.entries()) {
+                        if (!currentHexes.has(hex) && buffer.length > 0) {
+                            const lastEntry = buffer[buffer.length - 1];
+                            if (now - lastEntry.timestamp > INTERPOLATION_DELAY + 2000) {
+                                aircraftDataBuffer.delete(hex);
+                            }
+                        }
+                    }
+
+                    document.getElementById('plane-count').textContent = data.aircraft.length;
+                    document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Linear interpolation
+        function lerp(a, b, t) {
+            return a + (b - a) * t;
+        }
+
+        // Angle interpolation (handles wraparound)
+        function lerpAngle(a, b, t) {
+            a = ((a % 360) + 360) % 360;
+            b = ((b % 360) + 360) % 360;
+            let diff = b - a;
+            if (diff > 180) diff -= 360;
+            if (diff < -180) diff += 360;
+            return a + diff * t;
+        }
+
+        // Interpolation function - called at 30fps
+        function interpolateAircraft() {
+            const now = Date.now();
+            const targetTime = now - INTERPOLATION_DELAY;
+            const seenHexes = new Set();
+
+            for (const [hex, buffer] of aircraftDataBuffer.entries()) {
+                if (buffer.length === 0) continue;
+
+                // Find data points to interpolate between
+                let before = null;
+                let after = null;
+
+                for (let i = 0; i < buffer.length; i++) {
+                    if (buffer[i].timestamp <= targetTime) {
+                        before = buffer[i];
+                    } else {
+                        after = buffer[i];
+                        break;
+                    }
+                }
+
+                if (!before && !after) continue;
+                if (!before) before = after;
+                if (!after) after = before;
+
+                seenHexes.add(hex);
+
+                // Calculate interpolation factor
+                let t = 0;
+                if (before !== after && after.timestamp !== before.timestamp) {
+                    t = (targetTime - before.timestamp) / (after.timestamp - before.timestamp);
+                    t = Math.max(0, Math.min(1, t));
+                }
+
+                // Interpolate data
+                // Note: dump1090 uses 'gs' for ground speed, 'tas' for true airspeed, 'speed' sometimes
+                const beforeSpeed = before.data.gs ?? before.data.speed ?? before.data.tas;
+                const afterSpeed = after.data.gs ?? after.data.speed ?? after.data.tas;
+                const beforeAlt = before.data.altitude ?? before.data.alt_baro ?? before.data.alt_geom ?? 0;
+                const afterAlt = after.data.altitude ?? after.data.alt_baro ?? after.data.alt_geom ?? 0;
+
+                const interpolatedData = {
+                    hex: hex,
+                    lat: lerp(before.data.lat, after.data.lat, t),
+                    lon: lerp(before.data.lon, after.data.lon, t),
+                    altitude: lerp(beforeAlt, afterAlt, t),
+                    track: lerpAngle(before.data.track || 0, after.data.track || 0, t),
+                    gs: (beforeSpeed !== undefined && afterSpeed !== undefined) ? lerp(beforeSpeed, afterSpeed, t) : (afterSpeed ?? beforeSpeed),
+                    baro_rate: lerp(before.data.baro_rate || 0, after.data.baro_rate || 0, t),
+                    flight: after.data.flight || before.data.flight,
+                    squawk: after.data.squawk || before.data.squawk
+                };
+
+                let plane = airplanes.get(hex);
+
+                if (plane) {
+                    // Update existing plane
+                    const pos = latLonToXZ(interpolatedData.lat, interpolatedData.lon);
+                    const alt = interpolatedData.altitude * altitudeScale;
+
+                    // Store previous position for trail BEFORE updating
+                    const prevX = plane.position.x;
+                    const prevY = plane.position.y;
+                    const prevZ = plane.position.z;
+
+                    // Update position FIRST
+                    plane.position.set(pos.x, alt, pos.z);
+
+                    // Update heading
+                    if (interpolatedData.track !== undefined) {
+                        plane.rotation.y = (-interpolatedData.track * Math.PI / 180) + Math.PI;
+                    }
+
+                    // Mark plane as initialized after first real position update
+                    if (!plane.userData.positionInitialized) {
+                        plane.userData.positionInitialized = true;
+                        plane.userData.initTime = now;
+                    }
+
+                    // Add trail point AFTER position update, only if plane has been initialized for a bit
+                    // and previous position was valid (not at origin)
+                    const timeSinceInit = now - (plane.userData.initTime || now);
+                    if (showTrails &&
+                        timeSinceInit > 500 && // Wait 500ms after init before recording trails
+                        now - (plane.userData.lastTrailTime || 0) > 200) {
+
+                        plane.userData.lastTrailTime = now;
+
+                        // Only add if previous position was valid (not near origin)
+                        if (Math.abs(prevX) > 1 || Math.abs(prevZ) > 1) {
+                            plane.userData.trailPoints.push({
+                                x: prevX,
+                                y: prevY,
+                                z: prevZ
+                            });
+                            if (plane.userData.trailPoints.length > 30) {
+                                plane.userData.trailPoints.shift();
+                            }
+                            updateTrail(plane);
+                        }
+                    }
+
+                    // Update altitude line
+                    updateAltitudeLine(plane);
+
+                    // Update colors
+                    const newColor = getAltitudeColor(interpolatedData.altitude);
+                    if (plane.userData.noseMaterial) {
+                        plane.userData.noseMaterial.color.setHex(newColor);
+                        plane.userData.noseMaterial.emissive.setHex(newColor);
+                    }
+                    if (plane.userData.trailMaterial && currentTheme !== 'retro') {
+                        plane.userData.trailMaterial.color.setHex(newColor);
+                    }
+
+                    Object.assign(plane.userData, interpolatedData);
+                } else {
+                    // Create new plane - set position BEFORE adding to scene
+                    plane = createAirplane(interpolatedData);
+                    const pos = latLonToXZ(interpolatedData.lat, interpolatedData.lon);
+                    const alt = interpolatedData.altitude * altitudeScale;
+
+                    // Set position immediately so plane never appears at origin
+                    plane.position.set(pos.x, alt, pos.z);
+
+                    if (interpolatedData.track !== undefined) {
+                        plane.rotation.y = (-interpolatedData.track * Math.PI / 180) + Math.PI;
+                    }
+
+                    // Mark as initialized with current time - trails won't record for 500ms
+                    plane.userData.positionInitialized = true;
+                    plane.userData.initTime = now;
+
+                    scene.add(plane);
+                    airplanes.set(hex, plane);
+
+                    // Create altitude line after plane is positioned
+                    createAltLineForPlane(plane);
+                    updateAltitudeLine(plane);
+                }
+            }
+
+            // Remove planes no longer in data
+            for (const [hex, plane] of airplanes.entries()) {
+                if (!seenHexes.has(hex)) {
+                    scene.remove(plane);
+                    if (plane.userData.trail) scene.remove(plane.userData.trail);
+                    if (plane.userData.altLine) scene.remove(plane.userData.altLine);
+                    airplanes.delete(hex);
+                }
+            }
+        }
+
+        function updateAltitudeLine(plane) {
+            if (!plane.userData.altLine) {
+                createAltLineForPlane(plane);
+            }
+
+            const altLine = plane.userData.altLine;
+            if (!altLine) return;
+
+            // Only draw if plane has valid position
+            if (Math.abs(plane.position.x) < 0.1 && Math.abs(plane.position.z) < 0.1) {
+                altLine.geometry.setDrawRange(0, 0);
+                return;
+            }
+
+            const positions = altLine.geometry.attributes.position.array;
+            positions[0] = plane.position.x;
+            positions[1] = plane.position.y;
+            positions[2] = plane.position.z;
+            positions[3] = plane.position.x;
+            positions[4] = 0;
+            positions[5] = plane.position.z;
+
+            altLine.geometry.attributes.position.needsUpdate = true;
+            altLine.geometry.setDrawRange(0, 2);
+            altLine.computeLineDistances();
+        }
+
+        function updateAllAircraftPositions() {
+            for (const [hex, plane] of airplanes.entries()) {
+                if (plane.userData.lat && plane.userData.lon) {
+                    const pos = latLonToXZ(plane.userData.lat, plane.userData.lon);
+                    const alt = (plane.userData.altitude || 0) * altitudeScale;
+                    plane.position.set(pos.x, alt, pos.z);
+                    updateAltitudeLine(plane);
+                }
+            }
+            updateLabels();
+        }
+
+        function updateTrail(plane) {
+            // Filter out any invalid points (near origin)
+            plane.userData.trailPoints = plane.userData.trailPoints.filter(p =>
+                Math.abs(p.x) > 1 || Math.abs(p.z) > 1
+            );
+
+            const points = plane.userData.trailPoints;
+
+            // Need at least 2 valid points to draw a trail
+            if (points.length < 2) {
+                if (plane.userData.trail) {
+                    plane.userData.trail.geometry.setDrawRange(0, 0);
+                }
+                return;
+            }
+
+            // Create trail if needed
+            if (!plane.userData.trail) {
+                createTrailForPlane(plane);
+            }
+
+            const trail = plane.userData.trail;
+            if (!trail) return;
+
+            const positions = trail.geometry.attributes.position.array;
+            positions.fill(0);
+
+            let validCount = 0;
+            for (let i = 0; i < points.length && i < 30; i++) {
+                const idx = validCount * 3;
+                positions[idx] = points[i].x;
+                positions[idx + 1] = points[i].y;
+                positions[idx + 2] = points[i].z;
+                validCount++;
+            }
+
+            // Add current position if valid
+            if (validCount < 30 && (Math.abs(plane.position.x) > 1 || Math.abs(plane.position.z) > 1)) {
+                const idx = validCount * 3;
+                positions[idx] = plane.position.x;
+                positions[idx + 1] = plane.position.y;
+                positions[idx + 2] = plane.position.z;
+                validCount++;
+            }
+
+            trail.geometry.attributes.position.needsUpdate = true;
+            trail.geometry.setDrawRange(0, validCount);
+        }
+
+        function updateLabels() {
+            // Remove old labels from scene and clear array
+            labels.forEach(label => scene.remove(label));
+            labels = [];
+
+            // Also clear label references from planes
+            for (const [hex, plane] of airplanes.entries()) {
+                plane.userData.label = null;
+            }
+
+            if (!showLabels) return;
+
+            for (const [hex, plane] of airplanes.entries()) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 256;
+                canvas.height = 80;
+
+                if (currentTheme === 'retro') {
+                    ctx.fillStyle = 'rgba(0, 20, 0, 0.9)';
+                    ctx.strokeStyle = '#00ff00';
+                    ctx.lineWidth = 2;
+                } else {
+                    ctx.fillStyle = 'rgba(0, 20, 40, 0.85)';
+                }
+                ctx.beginPath();
+                ctx.roundRect(0, 0, 256, 80, 8);
+                ctx.fill();
+                if (currentTheme === 'retro') ctx.stroke();
+
+                ctx.fillStyle = currentTheme === 'retro' ? '#00ff00' : '#00ffff';
+                ctx.font = 'bold 22px monospace';
+                const callsign = plane.userData.flight || plane.userData.hex || 'Unknown';
+                ctx.fillText(callsign.trim(), 10, 28);
+
+                ctx.fillStyle = currentTheme === 'retro' ? '#00cc00' : '#88ff88';
+                ctx.font = '16px monospace';
+                ctx.fillText(formatAltitude(plane.userData.altitude || 0), 10, 50);
+
+                if (plane.userData.gs !== undefined && plane.userData.gs !== null) {
+                    ctx.fillStyle = currentTheme === 'retro' ? '#00aa00' : '#ffaa00';
+                    ctx.fillText(formatSpeed(plane.userData.gs), 10, 70);
+                }
+
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+                const sprite = new THREE.Sprite(material);
+                sprite.position.copy(plane.position);
+                sprite.position.y += 8;
+                sprite.scale.set(15, 4.7, 1);
+
+                // Store reference to label on the plane for correct position updates
+                plane.userData.label = sprite;
+
+                scene.add(sprite);
+                labels.push(sprite);
+            }
+        }
+
+        // Camera controls
+        function setupControls() {
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            renderer.domElement.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+
+                cameraAngle += deltaX * 0.01;
+                cameraHeight = Math.max(10, Math.min(300, cameraHeight - deltaY * 0.5));
+
+                updateCameraPosition();
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            renderer.domElement.addEventListener('mouseup', () => isDragging = false);
+            renderer.domElement.addEventListener('mouseleave', () => isDragging = false);
+
+            renderer.domElement.addEventListener('wheel', (e) => {
+                cameraDistance = Math.max(30, Math.min(500, cameraDistance + e.deltaY * 0.2));
+                updateCameraPosition();
+            });
+        }
+
+        function updateCameraPosition() {
+            camera.position.x = Math.sin(cameraAngle) * cameraDistance;
+            camera.position.z = Math.cos(cameraAngle) * cameraDistance;
+            camera.position.y = cameraHeight;
+            camera.lookAt(0, cameraHeight * 0.2, 0);
+        }
+
+        function resetCamera() {
+            cameraAngle = 0;
+            cameraHeight = 80;
+            cameraDistance = 150;
+            updateCameraPosition();
+        }
+
+        function cameraZoomIn() {
+            cameraDistance = Math.max(30, cameraDistance - 20);
+            updateCameraPosition();
+        }
+
+        function cameraZoomOut() {
+            cameraDistance = Math.min(500, cameraDistance + 20);
+            updateCameraPosition();
+        }
+
+        // Smooth rotation
+        let rotateDirection = null;
+        let rotateInterval = null;
+
+        function startRotate(direction) {
+            rotateDirection = direction;
+            if (rotateInterval) clearInterval(rotateInterval);
+            rotateInterval = setInterval(() => {
+                if (rotateDirection === 'left') {
+                    cameraAngle -= 0.02;
+                } else if (rotateDirection === 'right') {
+                    cameraAngle += 0.02;
+                }
+                updateCameraPosition();
+            }, 16);
+        }
+
+        function stopRotate() {
+            rotateDirection = null;
+            if (rotateInterval) {
+                clearInterval(rotateInterval);
+                rotateInterval = null;
+            }
+        }
+
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            document.getElementById('btn-rotate').classList.toggle('active', autoRotate);
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            document.getElementById('btn-labels').classList.toggle('active', showLabels);
+            updateLabels();
+        }
+
+        function toggleTrails() {
+            showTrails = !showTrails;
+            document.getElementById('btn-trails').classList.toggle('active', showTrails);
+            for (const [hex, plane] of airplanes.entries()) {
+                if (plane.userData.trail) {
+                    plane.userData.trail.visible = showTrails;
+                }
+                if (!showTrails) {
+                    plane.userData.trailPoints = [];
+                }
+            }
+        }
+
+        function onMouseClick(event) {
+            const mouse = new THREE.Vector2();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+
+            const planeObjects = Array.from(airplanes.values());
+            const intersects = raycaster.intersectObjects(planeObjects, true);
+
+            if (intersects.length > 0) {
+                let plane = intersects[0].object;
+                while (plane.parent && !plane.userData.hex) {
+                    plane = plane.parent;
+                }
+                if (plane.userData.hex) {
+                    selectPlane(plane);
+                }
+            } else {
+                deselectPlane();
+            }
+        }
+
+        function selectPlane(plane) {
+            selectedPlane = plane;
+            const panel = document.getElementById('selected-plane');
+            panel.style.display = 'block';
+
+            document.getElementById('sel-callsign').textContent = plane.userData.flight || plane.userData.hex || '--';
+            document.getElementById('sel-altitude').textContent = formatAltitude(plane.userData.altitude || 0);
+            document.getElementById('sel-speed').textContent = (plane.userData.gs !== undefined && plane.userData.gs !== null) ? formatSpeed(plane.userData.gs) : '--';
+            document.getElementById('sel-track').textContent = (plane.userData.track || '--') + '°';
+            document.getElementById('sel-vertrate').textContent = plane.userData.baro_rate ? formatVertRate(plane.userData.baro_rate) : '--';
+            document.getElementById('sel-squawk').textContent = plane.userData.squawk || '--';
+            document.getElementById('sel-position').textContent =
+                `${(plane.userData.lat || 0).toFixed(4)}°, ${(plane.userData.lon || 0).toFixed(4)}°`;
+        }
+
+        function deselectPlane() {
+            selectedPlane = null;
+            document.getElementById('selected-plane').style.display = 'none';
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        let time = 0;
+        let lastLabelUpdate = 0;
+        const INTERPOLATION_INTERVAL = 1000 / INTERPOLATION_FPS;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const now = Date.now();
+            time += 0.016;
+
+            // Run interpolation at 30fps
+            if (now - lastInterpolationTime >= INTERPOLATION_INTERVAL) {
+                lastInterpolationTime = now;
+                interpolateAircraft();
+            }
+
+            if (autoRotate) {
+                cameraAngle += 0.002;
+                updateCameraPosition();
+            }
+
+            // Animate position lights
+            for (const [hex, plane] of airplanes.entries()) {
+                if (plane.userData.positionLight) {
+                    plane.userData.lightPhase += 0.08;
+                    const brightness = Math.sin(plane.userData.lightPhase) > 0.7 ? 1 : 0.2;
+                    plane.userData.positionLight.material.opacity = brightness;
+                }
+            }
+
+            // Update labels periodically - redraw every 1 second to update speed/altitude
+            if (now - lastLabelUpdate > 1000) {
+                lastLabelUpdate = now;
+                updateLabels();
+
+                if (selectedPlane && airplanes.has(selectedPlane.userData.hex)) {
+                    selectPlane(airplanes.get(selectedPlane.userData.hex));
+                }
+            } else {
+                // Just update label positions between full redraws
+                // Use the stored label reference on each plane for correct matching
+                for (const [hex, plane] of airplanes.entries()) {
+                    if (plane.userData.label) {
+                        plane.userData.label.position.copy(plane.position);
+                        plane.userData.label.position.y += 8;
+                    }
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize
+        init();
+
+        // Set initial button states
+        document.getElementById('btn-labels').classList.add('active');
+        document.getElementById('btn-trails').classList.add('active');
+    </script>
+</body>
+</html>

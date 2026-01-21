@@ -268,6 +268,60 @@
         .theme-night #graphs-panel h3 { color: #00d4ff; }
         .theme-retro #graphs-panel h3 { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
 
+        .time-period-selector {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .time-period-btn {
+            flex: 1;
+            min-width: 45px;
+            padding: 6px 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .theme-day .time-period-btn {
+            background: rgba(0, 100, 200, 0.15);
+            color: #0066cc;
+        }
+        .theme-day .time-period-btn:hover {
+            background: rgba(0, 100, 200, 0.25);
+        }
+        .theme-day .time-period-btn.active {
+            background: #0088ff;
+            color: #fff;
+        }
+        .theme-night .time-period-btn {
+            background: rgba(0, 150, 255, 0.2);
+            color: #00d4ff;
+        }
+        .theme-night .time-period-btn:hover {
+            background: rgba(0, 150, 255, 0.35);
+        }
+        .theme-night .time-period-btn.active {
+            background: #0088ff;
+            color: #fff;
+        }
+        .theme-retro .time-period-btn {
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .theme-retro .time-period-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+        .theme-retro .time-period-btn.active {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+
         .graphs1090-status {
             font-size: 0.7em;
             padding: 2px 8px;
@@ -450,6 +504,14 @@
     <div id="graphs-panel">
         <h3>ADS-B Statistics <span class="graphs1090-status local" id="graphs-status">Local DB</span></h3>
 
+        <div class="time-period-selector">
+            <button class="time-period-btn active" onclick="setGraphsTimePeriod(3600)" data-period="3600">1h</button>
+            <button class="time-period-btn" onclick="setGraphsTimePeriod(7200)" data-period="7200">2h</button>
+            <button class="time-period-btn" onclick="setGraphsTimePeriod(28800)" data-period="28800">8h</button>
+            <button class="time-period-btn" onclick="setGraphsTimePeriod(86400)" data-period="86400">24h</button>
+            <button class="time-period-btn" onclick="setGraphsTimePeriod(172800)" data-period="172800">48h</button>
+        </div>
+
         <div class="graph-card" id="card-message-rate">
             <h4>Message Rate</h4>
             <div class="graph-current-value" id="msg-rate-value">-- msg/s</div>
@@ -567,6 +629,7 @@
                 showTrails: showTrails,
                 autoRotate: autoRotate,
                 showGraphs: showGraphs,
+                graphsTimePeriod: graphsTimePeriod,
                 altitudeScaleValue: Math.round(altitudeScale / BASE_ALT_SCALE)
             };
             setCookie('flightTrackerSettings', settings);
@@ -581,6 +644,7 @@
                 if (settings.showTrails !== undefined) showTrails = settings.showTrails;
                 if (settings.autoRotate !== undefined) autoRotate = settings.autoRotate;
                 if (settings.showGraphs !== undefined) showGraphs = settings.showGraphs;
+                if (settings.graphsTimePeriod !== undefined) graphsTimePeriod = settings.graphsTimePeriod;
                 if (settings.altitudeScaleValue !== undefined) {
                     altitudeScale = settings.altitudeScaleValue * BASE_ALT_SCALE;
                 }
@@ -644,13 +708,14 @@
         let showGraphs = false;
         let graphs1090Available = false;
         let statsDb = null;
+        let graphsTimePeriod = 3600; // Default 1 hour in seconds
         let statsHistory = {
             messageRate: [],
             aircraftSeen: [],
             aircraftTracked: [],
             signalLevel: []
         };
-        const STATS_HISTORY_MAX = 300; // 5 minutes at 1s intervals
+        const STATS_HISTORY_MAX = 172800; // 48 hours at 1s intervals
         const STATS_URL = '/dump1090/data/stats.json';
         const GRAPHS1090_CHECK_URL = '/graphs1090/';
 
@@ -857,6 +922,27 @@
             }
         }
 
+        // Filter history data based on selected time period
+        function filterHistoryByPeriod(historyArray) {
+            const now = Date.now();
+            const cutoff = now - (graphsTimePeriod * 1000);
+            return historyArray.filter(d => d.timestamp >= cutoff);
+        }
+
+        // Set graphs time period
+        function setGraphsTimePeriod(seconds) {
+            graphsTimePeriod = seconds;
+
+            // Update button states
+            document.querySelectorAll('.time-period-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.period) === seconds);
+            });
+
+            // Refresh display
+            updateGraphsDisplay();
+            saveSettings();
+        }
+
         // Update the graphs display
         function updateGraphsDisplay() {
             if (!showGraphs) return;
@@ -866,12 +952,19 @@
             const fillColor = isRetro ? 'rgba(0, 255, 0, 0.2)' : (currentTheme === 'night' ? 'rgba(0, 212, 255, 0.2)' : 'rgba(0, 136, 255, 0.2)');
             const secondLineColor = isRetro ? '#00cc00' : (currentTheme === 'night' ? '#ffaa00' : '#ff8800');
 
+            // Filter data by selected time period
+            const filteredMsgRate = filterHistoryByPeriod(statsHistory.messageRate);
+            const filteredAircraftSeen = filterHistoryByPeriod(statsHistory.aircraftSeen);
+            const filteredAircraftTracked = filterHistoryByPeriod(statsHistory.aircraftTracked);
+            const filteredSignal = filterHistoryByPeriod(statsHistory.signalLevel);
+
             // Message Rate Graph
-            if (statsHistory.messageRate.length > 0) {
-                const latest = statsHistory.messageRate[statsHistory.messageRate.length - 1].value;
+            if (filteredMsgRate.length > 0) {
+                const latest = statsHistory.messageRate.length > 0 ?
+                    statsHistory.messageRate[statsHistory.messageRate.length - 1].value : 0;
                 document.getElementById('msg-rate-value').textContent = latest.toFixed(1) + ' msg/s';
 
-                const values = statsHistory.messageRate.map(d => d.value);
+                const values = filteredMsgRate.map(d => d.value);
                 const min = Math.min(...values);
                 const max = Math.max(...values);
                 document.getElementById('msg-rate-min').textContent = 'Min: ' + min.toFixed(1);
@@ -881,15 +974,16 @@
             }
 
             // Aircraft Graph (seen & tracked)
-            if (statsHistory.aircraftTracked.length > 0) {
-                const latestTracked = statsHistory.aircraftTracked[statsHistory.aircraftTracked.length - 1].value;
+            if (filteredAircraftTracked.length > 0) {
+                const latestTracked = statsHistory.aircraftTracked.length > 0 ?
+                    statsHistory.aircraftTracked[statsHistory.aircraftTracked.length - 1].value : 0;
                 const latestSeen = statsHistory.aircraftSeen.length > 0 ?
                     statsHistory.aircraftSeen[statsHistory.aircraftSeen.length - 1].value : latestTracked;
                 document.getElementById('aircraft-value').textContent = latestSeen + ' / ' + latestTracked;
 
-                const trackedValues = statsHistory.aircraftTracked.map(d => d.value);
-                const seenValues = statsHistory.aircraftSeen.length > 0 ?
-                    statsHistory.aircraftSeen.map(d => d.value) : trackedValues;
+                const trackedValues = filteredAircraftTracked.map(d => d.value);
+                const seenValues = filteredAircraftSeen.length > 0 ?
+                    filteredAircraftSeen.map(d => d.value) : trackedValues;
 
                 const allValues = [...trackedValues, ...seenValues];
                 const min = Math.min(...allValues);
@@ -901,11 +995,12 @@
             }
 
             // Signal Level Graph
-            if (statsHistory.signalLevel.length > 0) {
-                const latest = statsHistory.signalLevel[statsHistory.signalLevel.length - 1].value;
+            if (filteredSignal.length > 0) {
+                const latest = statsHistory.signalLevel.length > 0 ?
+                    statsHistory.signalLevel[statsHistory.signalLevel.length - 1].value : -50;
                 document.getElementById('signal-value').textContent = latest.toFixed(1) + ' dBFS';
 
-                const values = statsHistory.signalLevel.map(d => d.value);
+                const values = filteredSignal.map(d => d.value);
                 const min = Math.min(...values);
                 const max = Math.max(...values);
                 document.getElementById('signal-min').textContent = 'Min: ' + min.toFixed(1) + ' dB';
@@ -1111,6 +1206,11 @@
             if (showGraphs) {
                 document.getElementById('graphs-panel').classList.add('visible');
             }
+
+            // Apply time period button state
+            document.querySelectorAll('.time-period-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.period) === graphsTimePeriod);
+            });
         }
 
         function updateSceneBackground() {

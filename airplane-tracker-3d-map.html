@@ -438,6 +438,428 @@
             border: 1px solid #00ff00;
             color: #00ff00;
         }
+
+        /* Keyboard Shortcuts Help Overlay */
+        #keyboard-help {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        #keyboard-help.visible {
+            display: flex;
+        }
+        #keyboard-help-content {
+            background: rgba(20, 40, 60, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #keyboard-help-content {
+            background: rgba(0, 20, 0, 0.95);
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        #keyboard-help h2 {
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-align: center;
+        }
+        .theme-retro #keyboard-help h2 {
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .shortcut-group {
+            margin-bottom: 20px;
+        }
+        .shortcut-group h3 {
+            color: #88ccff;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            border-bottom: 1px solid rgba(100, 150, 200, 0.3);
+            padding-bottom: 5px;
+        }
+        .theme-retro .shortcut-group h3 {
+            color: #00cc00;
+            border-color: rgba(0, 255, 0, 0.3);
+        }
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.9em;
+        }
+        .shortcut-key {
+            background: rgba(0, 100, 200, 0.3);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+        .theme-retro .shortcut-key {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+        .shortcut-desc {
+            color: #ccc;
+        }
+        .theme-retro .shortcut-desc {
+            color: #00cc00;
+        }
+        #keyboard-help .close-hint {
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.6;
+            font-size: 0.85em;
+        }
+
+        /* Timeline Panel */
+        #timeline-panel {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 400px;
+            max-width: 90vw;
+        }
+        #timeline-panel.visible {
+            display: flex;
+        }
+        .theme-day #timeline-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #timeline-panel {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #timeline-panel {
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        #timeline-panel h4 {
+            margin: 0;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .theme-day #timeline-panel h4 { color: #0066cc; }
+        .theme-night #timeline-panel h4 { color: #00d4ff; }
+        .theme-retro #timeline-panel h4 { color: #00ff00; }
+        #timeline-slider {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+        }
+        .timeline-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .timeline-controls button {
+            padding: 6px 12px;
+            font-size: 0.8em;
+        }
+        #timeline-time {
+            font-family: monospace;
+            font-size: 0.85em;
+            min-width: 150px;
+            text-align: center;
+        }
+        .timeline-mode-indicator {
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: rgba(255, 150, 0, 0.3);
+            color: #ffaa00;
+        }
+        .theme-retro .timeline-mode-indicator {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+
+        /* Enhanced Stats Dashboard */
+        #stats-dashboard {
+            position: absolute;
+            left: 20px;
+            top: 200px;
+            width: 280px;
+            max-height: calc(100vh - 280px);
+            overflow-y: auto;
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        #stats-dashboard.visible {
+            display: block;
+        }
+        .theme-day #stats-dashboard {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #stats-dashboard {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #stats-dashboard {
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        #stats-dashboard h3 {
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+        .theme-day #stats-dashboard h3 { color: #0066cc; }
+        .theme-night #stats-dashboard h3 { color: #00d4ff; }
+        .theme-retro #stats-dashboard h3 { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stats-item {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .theme-day .stats-item { background: rgba(0, 100, 200, 0.1); }
+        .theme-night .stats-item { background: rgba(0, 100, 200, 0.2); }
+        .theme-retro .stats-item { background: rgba(0, 255, 0, 0.1); border: 1px solid rgba(0, 255, 0, 0.3); }
+        .stats-item .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            display: block;
+        }
+        .theme-day .stats-item .value { color: #0088ff; }
+        .theme-night .stats-item .value { color: #00d4ff; }
+        .theme-retro .stats-item .value { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        .stats-item .label {
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+        .coverage-map {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .theme-day .coverage-map { background: rgba(0, 0, 0, 0.05); }
+        .theme-night .coverage-map { background: rgba(0, 0, 0, 0.3); }
+        .theme-retro .coverage-map { background: rgba(0, 50, 0, 0.5); border: 1px solid rgba(0, 255, 0, 0.3); }
+        .altitude-distribution {
+            margin-top: 10px;
+        }
+        .altitude-bar {
+            display: flex;
+            align-items: center;
+            margin: 4px 0;
+            font-size: 0.75em;
+        }
+        .altitude-bar .label {
+            width: 60px;
+            text-align: right;
+            margin-right: 8px;
+        }
+        .altitude-bar .bar {
+            flex: 1;
+            height: 12px;
+            border-radius: 3px;
+            position: relative;
+        }
+        .theme-day .altitude-bar .bar { background: rgba(0, 100, 200, 0.2); }
+        .theme-night .altitude-bar .bar { background: rgba(0, 100, 200, 0.3); }
+        .theme-retro .altitude-bar .bar { background: rgba(0, 255, 0, 0.15); }
+        .altitude-bar .fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .altitude-bar .count {
+            width: 30px;
+            text-align: right;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        /* Aircraft Info Enrichment Panel */
+        #aircraft-enriched-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(128, 128, 128, 0.3);
+            display: none;
+        }
+        #aircraft-enriched-info.visible {
+            display: block;
+        }
+        .enriched-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.85em;
+        }
+        .enriched-label {
+            opacity: 0.7;
+        }
+        .enriched-value {
+            font-weight: 500;
+        }
+        #aircraft-photo {
+            width: 100%;
+            max-height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+        .enriched-loading {
+            text-align: center;
+            padding: 10px;
+            opacity: 0.6;
+            font-size: 0.85em;
+        }
+        .external-links {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .external-link {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .theme-day .external-link {
+            background: rgba(0, 100, 200, 0.15);
+            color: #0066cc;
+        }
+        .theme-night .external-link {
+            background: rgba(0, 150, 255, 0.2);
+            color: #00d4ff;
+        }
+        .theme-retro .external-link {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .external-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Mobile Touch Optimization */
+        @media (max-width: 768px) {
+            #controls {
+                padding: 10px 15px;
+                gap: 6px;
+                bottom: 10px;
+            }
+            .control-group {
+                padding: 0 6px;
+            }
+            button {
+                padding: 10px 14px;
+                font-size: 0.9em;
+                min-height: 44px;
+            }
+            select {
+                padding: 10px 12px;
+                font-size: 0.9em;
+                min-height: 44px;
+            }
+            #info-panel {
+                top: 10px;
+                left: 10px;
+                padding: 12px;
+                min-width: 200px;
+                font-size: 0.9em;
+            }
+            #selected-plane {
+                top: 10px;
+                right: 10px;
+                padding: 12px;
+                min-width: 220px;
+                max-width: 45vw;
+            }
+            #altitude-slider-container {
+                right: 10px;
+                padding: 10px;
+            }
+            #altitude-slider {
+                height: 100px;
+            }
+            #graphs-panel {
+                right: 10px;
+                width: 280px;
+                max-height: calc(100vh - 100px);
+            }
+            #timeline-panel {
+                min-width: 90vw;
+                bottom: 70px;
+            }
+            #stats-dashboard {
+                width: 240px;
+                top: 160px;
+            }
+            .control-label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .control-group {
+                border-right: none;
+                border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+                padding: 5px;
+                width: 100%;
+                justify-content: center;
+            }
+            .control-group:last-child {
+                border-bottom: none;
+            }
+            #info-panel h2 {
+                font-size: 1.1em;
+            }
+            #selected-plane {
+                max-width: 60vw;
+            }
+        }
+
+        /* Touch feedback */
+        @media (hover: none) and (pointer: coarse) {
+            button:active, select:active {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
     </style>
 </head>
 <body class="theme-retro">
@@ -492,6 +914,38 @@
         <div class="stat">
             <span class="stat-label">Position:</span>
             <span class="stat-value" id="sel-position">--</span>
+        </div>
+        <!-- Aircraft Enriched Information -->
+        <div id="aircraft-enriched-info">
+            <div class="enriched-loading" id="enriched-loading">Loading aircraft info...</div>
+            <div id="enriched-data" style="display:none;">
+                <div class="enriched-row">
+                    <span class="enriched-label">Registration:</span>
+                    <span class="enriched-value" id="sel-registration">--</span>
+                </div>
+                <div class="enriched-row">
+                    <span class="enriched-label">Aircraft:</span>
+                    <span class="enriched-value" id="sel-aircraft-type">--</span>
+                </div>
+                <div class="enriched-row">
+                    <span class="enriched-label">Operator:</span>
+                    <span class="enriched-value" id="sel-operator">--</span>
+                </div>
+                <div class="enriched-row">
+                    <span class="enriched-label">Origin:</span>
+                    <span class="enriched-value" id="sel-origin">--</span>
+                </div>
+                <div class="enriched-row">
+                    <span class="enriched-label">Destination:</span>
+                    <span class="enriched-value" id="sel-destination">--</span>
+                </div>
+                <img id="aircraft-photo" alt="Aircraft" />
+                <div class="external-links">
+                    <a class="external-link" id="link-flightaware" href="#" target="_blank">FlightAware</a>
+                    <a class="external-link" id="link-fr24" href="#" target="_blank">FR24</a>
+                    <a class="external-link" id="link-adsbx" href="#" target="_blank">ADSB-X</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -597,6 +1051,119 @@
             </select>
             <button onclick="toggleLabels()" id="btn-labels">Labels</button>
             <button onclick="toggleGraphs()" id="btn-graphs">Graphs</button>
+            <button onclick="toggleTimeline()" id="btn-timeline">Timeline</button>
+            <button onclick="toggleStatsDashboard()" id="btn-stats">Stats</button>
+        </div>
+    </div>
+
+    <!-- Timeline Panel -->
+    <div id="timeline-panel">
+        <h4>
+            <span>Flight History Timeline</span>
+            <span class="timeline-mode-indicator" id="timeline-mode">LIVE</span>
+        </h4>
+        <input type="range" id="timeline-slider" min="0" max="100" value="100">
+        <div class="timeline-controls">
+            <button onclick="timelineStepBack()">⏮</button>
+            <button onclick="timelinePlayPause()" id="btn-play-pause">▶</button>
+            <button onclick="timelineStepForward()">⏭</button>
+            <span id="timeline-time">Now</span>
+            <button onclick="timelineGoLive()">LIVE</button>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div id="stats-dashboard">
+        <h3>Performance Dashboard</h3>
+        <div class="stats-grid">
+            <div class="stats-item">
+                <span class="value" id="stats-total-tracked">0</span>
+                <span class="label">Total Tracked (24h)</span>
+            </div>
+            <div class="stats-item">
+                <span class="value" id="stats-max-concurrent">0</span>
+                <span class="label">Max Concurrent</span>
+            </div>
+            <div class="stats-item">
+                <span class="value" id="stats-avg-altitude">0</span>
+                <span class="label">Avg Altitude</span>
+            </div>
+            <div class="stats-item">
+                <span class="value" id="stats-data-quality">--%</span>
+                <span class="label">Data Quality</span>
+            </div>
+        </div>
+        <h4 style="margin-bottom: 8px; font-size: 0.85em;">Coverage Heatmap</h4>
+        <canvas class="coverage-map" id="coverage-canvas"></canvas>
+        <h4 style="margin-bottom: 8px; font-size: 0.85em;">Altitude Distribution</h4>
+        <div class="altitude-distribution" id="altitude-distribution">
+            <div class="altitude-bar">
+                <span class="label">&lt;5k ft</span>
+                <div class="bar"><div class="fill" id="alt-bar-0" style="width: 0%; background: #00ff00;"></div></div>
+                <span class="count" id="alt-count-0">0</span>
+            </div>
+            <div class="altitude-bar">
+                <span class="label">5-15k ft</span>
+                <div class="bar"><div class="fill" id="alt-bar-1" style="width: 0%; background: #88ff00;"></div></div>
+                <span class="count" id="alt-count-1">0</span>
+            </div>
+            <div class="altitude-bar">
+                <span class="label">15-30k ft</span>
+                <div class="bar"><div class="fill" id="alt-bar-2" style="width: 0%; background: #ffff00;"></div></div>
+                <span class="count" id="alt-count-2">0</span>
+            </div>
+            <div class="altitude-bar">
+                <span class="label">30-40k ft</span>
+                <div class="bar"><div class="fill" id="alt-bar-3" style="width: 0%; background: #ff8800;"></div></div>
+                <span class="count" id="alt-count-3">0</span>
+            </div>
+            <div class="altitude-bar">
+                <span class="label">&gt;40k ft</span>
+                <div class="bar"><div class="fill" id="alt-bar-4" style="width: 0%; background: #ff0088;"></div></div>
+                <span class="count" id="alt-count-4">0</span>
+            </div>
+        </div>
+        <h4 style="margin: 15px 0 8px 0; font-size: 0.85em;">Top Aircraft Types</h4>
+        <div id="top-aircraft-types" style="font-size: 0.8em;"></div>
+    </div>
+
+    <!-- Keyboard Help Overlay -->
+    <div id="keyboard-help">
+        <div id="keyboard-help-content">
+            <h2>Keyboard Shortcuts</h2>
+            <div class="shortcut-group">
+                <h3>Navigation</h3>
+                <div class="shortcut-row"><span class="shortcut-key">↑↓←→</span><span class="shortcut-desc">Pan map</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">+ / =</span><span class="shortcut-desc">Zoom camera in</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">- / _</span><span class="shortcut-desc">Zoom camera out</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">[ / ]</span><span class="shortcut-desc">Rotate camera left/right</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">R</span><span class="shortcut-desc">Reset camera view</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">M + / M -</span><span class="shortcut-desc">Map zoom in/out</span></div>
+            </div>
+            <div class="shortcut-group">
+                <h3>Display</h3>
+                <div class="shortcut-row"><span class="shortcut-key">L</span><span class="shortcut-desc">Toggle labels</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">G</span><span class="shortcut-desc">Toggle graphs</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">A</span><span class="shortcut-desc">Toggle auto-rotate</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">T</span><span class="shortcut-desc">Cycle trail duration</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">H</span><span class="shortcut-desc">Toggle timeline</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">D</span><span class="shortcut-desc">Toggle stats dashboard</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">1 / 2 / 3</span><span class="shortcut-desc">Switch theme (Day/Night/Retro)</span></div>
+            </div>
+            <div class="shortcut-group">
+                <h3>Selection</h3>
+                <div class="shortcut-row"><span class="shortcut-key">Tab</span><span class="shortcut-desc">Select next aircraft</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">Shift+Tab</span><span class="shortcut-desc">Select previous aircraft</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">Escape</span><span class="shortcut-desc">Deselect / Close panels</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">F</span><span class="shortcut-desc">Follow selected aircraft</span></div>
+            </div>
+            <div class="shortcut-group">
+                <h3>Timeline (when open)</h3>
+                <div class="shortcut-row"><span class="shortcut-key">Space</span><span class="shortcut-desc">Play/Pause playback</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">, / .</span><span class="shortcut-desc">Step back/forward</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">Home</span><span class="shortcut-desc">Go to live</span></div>
+            </div>
+            <p class="close-hint">Press <strong>?</strong> or <strong>Escape</strong> to close</p>
         </div>
     </div>
 
@@ -788,6 +1355,35 @@
         let cameraDistance = 150;
         let isDragging = false;
         let previousMousePosition = { x: 0, y: 0 };
+
+        // Follow mode
+        let followSelectedPlane = false;
+
+        // Timeline state
+        let showTimeline = false;
+        let timelineIsPlaying = false;
+        let timelinePosition = 100; // 0-100, 100 = live
+        let timelineHistory = []; // Array of snapshots: {timestamp, aircraft: [...]}
+        const TIMELINE_HISTORY_MAX = 3600; // 1 hour at 1 second intervals
+        const TIMELINE_SNAPSHOT_INTERVAL = 1000; // Capture every second
+        let lastTimelineSnapshot = 0;
+
+        // Stats dashboard state
+        let showStatsDashboard = false;
+        let uniqueAircraftSeen = new Set();
+        let maxConcurrentAircraft = 0;
+        let coverageHeatmap = new Array(20 * 20).fill(0); // 20x20 grid
+        let aircraftTypeStats = new Map();
+
+        // Aircraft information cache
+        let aircraftInfoCache = new Map();
+        let enrichmentApiAvailable = null; // null = unknown, true/false after check
+
+        // Touch gesture state
+        let touchStartDistance = 0;
+        let touchStartAngle = 0;
+        let lastTouchCenter = { x: 0, y: 0 };
+        let isTwoFingerGesture = false;
 
         // ===========================================
         // GRAPHS1090 INTEGRATION & LOCAL STATS
@@ -1334,6 +1930,12 @@
             // Mouse interaction
             renderer.domElement.addEventListener('click', onMouseClick);
 
+            // Touch gestures for mobile
+            setupTouchControls();
+
+            // Keyboard shortcuts
+            setupKeyboardShortcuts();
+
             // Altitude slider
             const slider = document.getElementById('altitude-slider');
             slider.addEventListener('input', (e) => {
@@ -1534,7 +2136,17 @@
                     wing: new THREE.EdgesGeometry(new THREE.BoxGeometry(6, 0.1, 1.5)),
                     tail: new THREE.EdgesGeometry(new THREE.BoxGeometry(0.1, 1.2, 0.8)),
                     hStab: new THREE.EdgesGeometry(new THREE.BoxGeometry(2.5, 0.1, 0.5)),
-                    light: new THREE.SphereGeometry(0.2, 4, 4)
+                    light: new THREE.SphereGeometry(0.2, 4, 4),
+                    // Helicopter rotor
+                    rotor: new THREE.EdgesGeometry(new THREE.BoxGeometry(8, 0.05, 0.3)),
+                    rotorMast: new THREE.EdgesGeometry(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 4)),
+                    // Small aircraft (prop plane)
+                    smallFuselage: new THREE.EdgesGeometry(new THREE.BoxGeometry(0.5, 0.4, 2.5)),
+                    smallWing: new THREE.EdgesGeometry(new THREE.BoxGeometry(5, 0.08, 0.8)),
+                    propeller: new THREE.EdgesGeometry(new THREE.BoxGeometry(0.1, 1.5, 0.1)),
+                    // Wide-body
+                    wideFuselage: new THREE.EdgesGeometry(new THREE.BoxGeometry(1.2, 0.9, 5.5)),
+                    wideWing: new THREE.EdgesGeometry(new THREE.BoxGeometry(9, 0.12, 2))
                 },
                 // Solid geometries (day/night themes)
                 solid: {
@@ -1544,7 +2156,26 @@
                     tailFin: new THREE.BoxGeometry(0.15, 1.2, 1),
                     hStab: new THREE.BoxGeometry(2, 0.1, 0.6),
                     engine: new THREE.CylinderGeometry(0.25, 0.25, 0.8, 8),
-                    light: new THREE.SphereGeometry(0.15, 8, 8)
+                    light: new THREE.SphereGeometry(0.15, 8, 8),
+                    // Helicopter
+                    heliFuselage: new THREE.CylinderGeometry(0.4, 0.5, 2.5, 8),
+                    heliCabin: new THREE.SphereGeometry(0.6, 8, 6),
+                    heliTail: new THREE.CylinderGeometry(0.15, 0.1, 2.5, 6),
+                    rotor: new THREE.BoxGeometry(6, 0.05, 0.2),
+                    tailRotor: new THREE.BoxGeometry(0.05, 1.2, 0.15),
+                    // Small aircraft
+                    smallFuselage: new THREE.CylinderGeometry(0.25, 0.35, 2.5, 8),
+                    smallWing: new THREE.BoxGeometry(4, 0.08, 0.8),
+                    propeller: new THREE.BoxGeometry(0.08, 1.2, 0.08),
+                    // Wide-body
+                    wideFuselage: new THREE.CylinderGeometry(0.7, 0.8, 5.5, 10),
+                    wideNose: new THREE.ConeGeometry(0.7, 1.5, 10),
+                    wideWing: new THREE.BoxGeometry(8, 0.2, 2.2),
+                    wideEngine: new THREE.CylinderGeometry(0.4, 0.4, 1.2, 8),
+                    // Military (angular)
+                    milFuselage: new THREE.BoxGeometry(0.6, 0.4, 4.5),
+                    milWing: new THREE.BufferGeometry(), // Will be created as triangle
+                    milTail: new THREE.BoxGeometry(0.08, 0.8, 0.6)
                 },
                 // LOD geometries (simplified for distant aircraft)
                 lod: {
@@ -1554,6 +2185,16 @@
                 // Shared tile geometry
                 tile: new THREE.PlaneGeometry(MAP_GROUND_SIZE / TILES_PER_SIDE, MAP_GROUND_SIZE / TILES_PER_SIDE)
             };
+
+            // Create military delta wing geometry
+            const milWingVerts = new Float32Array([
+                0, 0, -2,    // back center
+                -3, 0, 1,   // left front
+                3, 0, 1,    // right front
+            ]);
+            _sharedGeometries.solid.milWing = new THREE.BufferGeometry();
+            _sharedGeometries.solid.milWing.setAttribute('position', new THREE.BufferAttribute(milWingVerts, 3));
+            _sharedGeometries.solid.milWing.computeVertexNormals();
         }
 
         // Get pooled material or create new one
@@ -2012,84 +2653,302 @@
             const group = new THREE.Group();
             const color = getAltitudeColor(data.altitude || 0);
             const isRetro = currentTheme === 'retro';
+            const category = getAircraftCategory(data);
 
             if (isRetro) {
-                // WIREFRAME MODE for retro 80s theme - using shared geometries
+                // WIREFRAME MODE for retro 80s theme
                 const wireMat = getPooledMaterial('wireframe', { color: 0x00ff00 });
+                let positionLight;
 
-                // Use shared geometries for all parts
-                const fuselageWire = new THREE.LineSegments(_sharedGeometries.wire.fuselage, wireMat);
-                group.add(fuselageWire);
+                if (category === 'helicopter') {
+                    // Helicopter wireframe
+                    const cabin = new THREE.LineSegments(_sharedGeometries.wire.fuselage, wireMat);
+                    cabin.scale.set(0.8, 0.8, 0.6);
+                    group.add(cabin);
 
-                const noseWire = new THREE.LineSegments(_sharedGeometries.wire.nose, wireMat.clone());
-                noseWire.rotation.x = -Math.PI / 2;
-                noseWire.position.z = 2.6;
-                group.add(noseWire);
+                    const tail = new THREE.LineSegments(_sharedGeometries.wire.fuselage, wireMat.clone());
+                    tail.scale.set(0.2, 0.2, 1.2);
+                    tail.position.set(0, 0, -1.5);
+                    group.add(tail);
 
-                const wingWire = new THREE.LineSegments(_sharedGeometries.wire.wing, wireMat.clone());
-                group.add(wingWire);
+                    const mainRotor = new THREE.LineSegments(_sharedGeometries.wire.rotor, wireMat.clone());
+                    mainRotor.position.set(0, 0.5, 0);
+                    mainRotor.userData.isRotor = true;
+                    group.add(mainRotor);
 
-                const tailWire = new THREE.LineSegments(_sharedGeometries.wire.tail, wireMat.clone());
-                tailWire.position.set(0, 0.6, -1.8);
-                group.add(tailWire);
+                    const tailRotor = new THREE.LineSegments(_sharedGeometries.wire.rotor, wireMat.clone());
+                    tailRotor.scale.set(0.3, 1, 0.3);
+                    tailRotor.rotation.z = Math.PI / 2;
+                    tailRotor.position.set(0.3, 0, -2.2);
+                    group.add(tailRotor);
 
-                const hStabWire = new THREE.LineSegments(_sharedGeometries.wire.hStab, wireMat.clone());
-                hStabWire.position.set(0, 0, -1.8);
-                group.add(hStabWire);
+                    const lightMat = getPooledMaterial('basic', { color: 0x00ff00, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.wire.light, lightMat);
+                    positionLight.position.set(0, 0.8, 0);
+                    group.add(positionLight);
+                } else if (category === 'small') {
+                    // Small prop plane wireframe
+                    const fuselageWire = new THREE.LineSegments(_sharedGeometries.wire.smallFuselage, wireMat);
+                    group.add(fuselageWire);
 
-                // Blinking light - using shared geometry
-                const lightMat = getPooledMaterial('basic', { color: 0x00ff00, transparent: true });
-                const positionLight = new THREE.Mesh(_sharedGeometries.wire.light, lightMat);
-                positionLight.position.set(0, 0, 2.6);
-                group.add(positionLight);
+                    const wingWire = new THREE.LineSegments(_sharedGeometries.wire.smallWing, wireMat.clone());
+                    group.add(wingWire);
+
+                    const propWire = new THREE.LineSegments(_sharedGeometries.wire.propeller, wireMat.clone());
+                    propWire.position.set(0, 0, 1.5);
+                    propWire.userData.isProp = true;
+                    group.add(propWire);
+
+                    const tailWire = new THREE.LineSegments(_sharedGeometries.wire.tail, wireMat.clone());
+                    tailWire.scale.set(0.8, 0.6, 0.6);
+                    tailWire.position.set(0, 0.3, -1.2);
+                    group.add(tailWire);
+
+                    const lightMat = getPooledMaterial('basic', { color: 0x00ff00, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.wire.light, lightMat);
+                    positionLight.position.set(0, 0, 1.5);
+                    group.add(positionLight);
+                } else if (category === 'widebody') {
+                    // Wide-body wireframe
+                    const fuselageWire = new THREE.LineSegments(_sharedGeometries.wire.wideFuselage, wireMat);
+                    group.add(fuselageWire);
+
+                    const noseWire = new THREE.LineSegments(_sharedGeometries.wire.nose, wireMat.clone());
+                    noseWire.scale.set(1.4, 1.4, 1.2);
+                    noseWire.rotation.x = -Math.PI / 2;
+                    noseWire.position.z = 3.5;
+                    group.add(noseWire);
+
+                    const wingWire = new THREE.LineSegments(_sharedGeometries.wire.wideWing, wireMat.clone());
+                    group.add(wingWire);
+
+                    const tailWire = new THREE.LineSegments(_sharedGeometries.wire.tail, wireMat.clone());
+                    tailWire.scale.set(1.2, 1.5, 1.2);
+                    tailWire.position.set(0, 0.8, -2.5);
+                    group.add(tailWire);
+
+                    const lightMat = getPooledMaterial('basic', { color: 0x00ff00, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.wire.light, lightMat);
+                    positionLight.position.set(0, 0, 3.5);
+                    group.add(positionLight);
+                } else {
+                    // Default jet wireframe (narrow-body, regional, military)
+                    const fuselageWire = new THREE.LineSegments(_sharedGeometries.wire.fuselage, wireMat);
+                    group.add(fuselageWire);
+
+                    const noseWire = new THREE.LineSegments(_sharedGeometries.wire.nose, wireMat.clone());
+                    noseWire.rotation.x = -Math.PI / 2;
+                    noseWire.position.z = 2.6;
+                    group.add(noseWire);
+
+                    const wingWire = new THREE.LineSegments(_sharedGeometries.wire.wing, wireMat.clone());
+                    if (category === 'military') {
+                        wingWire.scale.set(0.8, 1, 1.5); // Swept wings
+                    }
+                    group.add(wingWire);
+
+                    const tailWire = new THREE.LineSegments(_sharedGeometries.wire.tail, wireMat.clone());
+                    tailWire.position.set(0, 0.6, -1.8);
+                    group.add(tailWire);
+
+                    const hStabWire = new THREE.LineSegments(_sharedGeometries.wire.hStab, wireMat.clone());
+                    hStabWire.position.set(0, 0, -1.8);
+                    group.add(hStabWire);
+
+                    const lightMat = getPooledMaterial('basic', { color: 0x00ff00, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.wire.light, lightMat);
+                    positionLight.position.set(0, 0, 2.6);
+                    group.add(positionLight);
+                }
 
                 group.userData = {
                     ...data,
+                    category: category,
                     noseMaterial: null,
                     positionLight: positionLight,
                     lightPhase: Math.random() * Math.PI * 2,
                     isWireframe: true
                 };
             } else {
-                // SOLID MODE for day/night themes - using shared geometries
-                const fuselageMat = getPooledMaterial('phong', { color: 0xffffff, emissive: 0x222222 });
-                const fuselage = new THREE.Mesh(_sharedGeometries.solid.fuselage, fuselageMat);
-                fuselage.rotation.x = Math.PI / 2;
-                group.add(fuselage);
+                // SOLID MODE for day/night themes
+                let positionLight;
+                let noseMat, wingMat, fuselageMat;
 
-                const noseMat = getPooledMaterial('phong', { color: color, emissive: color, emissiveIntensity: 0.3 });
-                const nose = new THREE.Mesh(_sharedGeometries.solid.nose, noseMat);
-                nose.rotation.x = -Math.PI / 2;
-                nose.position.z = 2.6;
-                group.add(nose);
+                if (category === 'helicopter') {
+                    // Helicopter solid model
+                    fuselageMat = getPooledMaterial('phong', { color: 0xcc0000, emissive: 0x330000 });
+                    const cabin = new THREE.Mesh(_sharedGeometries.solid.heliCabin, fuselageMat);
+                    group.add(cabin);
 
-                const wingMat = getPooledMaterial('phong', { color: 0xcccccc, emissive: 0x333333 });
-                const wings = new THREE.Mesh(_sharedGeometries.solid.wing, wingMat);
-                group.add(wings);
+                    const tailMat = getPooledMaterial('phong', { color: 0xaa0000, emissive: 0x220000 });
+                    const tail = new THREE.Mesh(_sharedGeometries.solid.heliTail, tailMat);
+                    tail.rotation.z = Math.PI / 2;
+                    tail.position.set(0, -0.1, -1.8);
+                    group.add(tail);
 
-                const tailFin = new THREE.Mesh(_sharedGeometries.solid.tailFin, wingMat);
-                tailFin.position.set(0, 0.6, -1.8);
-                group.add(tailFin);
+                    wingMat = getPooledMaterial('phong', { color: 0x333333, emissive: 0x111111 });
+                    const mainRotor = new THREE.Mesh(_sharedGeometries.solid.rotor, wingMat);
+                    mainRotor.position.set(0, 0.7, 0);
+                    mainRotor.userData.isRotor = true;
+                    group.add(mainRotor);
 
-                const hStab = new THREE.Mesh(_sharedGeometries.solid.hStab, wingMat);
-                hStab.position.set(0, 0, -1.8);
-                group.add(hStab);
+                    const mainRotor2 = new THREE.Mesh(_sharedGeometries.solid.rotor, wingMat);
+                    mainRotor2.rotation.y = Math.PI / 2;
+                    mainRotor2.position.set(0, 0.7, 0);
+                    mainRotor2.userData.isRotor = true;
+                    group.add(mainRotor2);
 
-                const engineMat = getPooledMaterial('phong', { color: 0x444444 });
-                [-1.2, 1.2].forEach(xPos => {
-                    const engine = new THREE.Mesh(_sharedGeometries.solid.engine, engineMat);
-                    engine.rotation.x = Math.PI / 2;
-                    engine.position.set(xPos, -0.3, 0.2);
-                    group.add(engine);
-                });
+                    const tailRotor = new THREE.Mesh(_sharedGeometries.solid.tailRotor, wingMat);
+                    tailRotor.position.set(0.15, 0, -2.8);
+                    group.add(tailRotor);
 
-                const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
-                const positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
-                positionLight.position.set(0, 0.3, -1.5);
-                group.add(positionLight);
+                    noseMat = fuselageMat;
+                    const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
+                    positionLight.position.set(0, 0.9, 0);
+                    group.add(positionLight);
+                } else if (category === 'small') {
+                    // Small prop plane
+                    fuselageMat = getPooledMaterial('phong', { color: 0xffffff, emissive: 0x222222 });
+                    const fuselage = new THREE.Mesh(_sharedGeometries.solid.smallFuselage, fuselageMat);
+                    fuselage.rotation.x = Math.PI / 2;
+                    group.add(fuselage);
+
+                    noseMat = getPooledMaterial('phong', { color: color, emissive: color, emissiveIntensity: 0.3 });
+                    const nose = new THREE.Mesh(_sharedGeometries.solid.nose, noseMat);
+                    nose.scale.set(0.6, 0.6, 0.6);
+                    nose.rotation.x = -Math.PI / 2;
+                    nose.position.z = 1.6;
+                    group.add(nose);
+
+                    wingMat = getPooledMaterial('phong', { color: 0xdddddd, emissive: 0x333333 });
+                    const wings = new THREE.Mesh(_sharedGeometries.solid.smallWing, wingMat);
+                    wings.position.y = 0.1;
+                    group.add(wings);
+
+                    const propMat = getPooledMaterial('phong', { color: 0x333333 });
+                    const prop = new THREE.Mesh(_sharedGeometries.solid.propeller, propMat);
+                    prop.position.set(0, 0, 1.8);
+                    prop.userData.isProp = true;
+                    group.add(prop);
+
+                    const tailFin = new THREE.Mesh(_sharedGeometries.solid.tailFin, wingMat);
+                    tailFin.scale.set(0.7, 0.5, 0.6);
+                    tailFin.position.set(0, 0.3, -1.2);
+                    group.add(tailFin);
+
+                    const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
+                    positionLight.position.set(0, 0.2, -1);
+                    group.add(positionLight);
+                } else if (category === 'widebody') {
+                    // Wide-body aircraft
+                    fuselageMat = getPooledMaterial('phong', { color: 0xffffff, emissive: 0x222222 });
+                    const fuselage = new THREE.Mesh(_sharedGeometries.solid.wideFuselage, fuselageMat);
+                    fuselage.rotation.x = Math.PI / 2;
+                    group.add(fuselage);
+
+                    noseMat = getPooledMaterial('phong', { color: color, emissive: color, emissiveIntensity: 0.3 });
+                    const nose = new THREE.Mesh(_sharedGeometries.solid.wideNose, noseMat);
+                    nose.rotation.x = -Math.PI / 2;
+                    nose.position.z = 3.5;
+                    group.add(nose);
+
+                    wingMat = getPooledMaterial('phong', { color: 0xcccccc, emissive: 0x333333 });
+                    const wings = new THREE.Mesh(_sharedGeometries.solid.wideWing, wingMat);
+                    group.add(wings);
+
+                    const tailFin = new THREE.Mesh(_sharedGeometries.solid.tailFin, wingMat);
+                    tailFin.scale.set(1.3, 1.5, 1.3);
+                    tailFin.position.set(0, 0.9, -2.5);
+                    group.add(tailFin);
+
+                    const engineMat = getPooledMaterial('phong', { color: 0x444444 });
+                    [-2.2, -1.1, 1.1, 2.2].forEach(xPos => {
+                        const engine = new THREE.Mesh(_sharedGeometries.solid.wideEngine, engineMat);
+                        engine.rotation.x = Math.PI / 2;
+                        engine.position.set(xPos, -0.4, 0.3);
+                        group.add(engine);
+                    });
+
+                    const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
+                    positionLight.position.set(0, 0.4, -2);
+                    group.add(positionLight);
+                } else if (category === 'military') {
+                    // Military aircraft (angular)
+                    fuselageMat = getPooledMaterial('phong', { color: 0x556655, emissive: 0x222222 });
+                    const fuselage = new THREE.Mesh(_sharedGeometries.solid.milFuselage, fuselageMat);
+                    group.add(fuselage);
+
+                    noseMat = getPooledMaterial('phong', { color: 0x445544, emissive: 0x111111 });
+                    const nose = new THREE.Mesh(_sharedGeometries.solid.nose, noseMat);
+                    nose.scale.set(0.7, 0.5, 1.2);
+                    nose.rotation.x = -Math.PI / 2;
+                    nose.position.z = 2.8;
+                    group.add(nose);
+
+                    wingMat = getPooledMaterial('phong', { color: 0x556655, emissive: 0x222222 });
+                    const wings = new THREE.Mesh(_sharedGeometries.solid.milWing, wingMat);
+                    wings.scale.set(1.2, 1, 1);
+                    group.add(wings);
+
+                    const tail1 = new THREE.Mesh(_sharedGeometries.solid.milTail, wingMat);
+                    tail1.position.set(-0.5, 0.4, -2);
+                    tail1.rotation.z = 0.3;
+                    group.add(tail1);
+
+                    const tail2 = new THREE.Mesh(_sharedGeometries.solid.milTail, wingMat);
+                    tail2.position.set(0.5, 0.4, -2);
+                    tail2.rotation.z = -0.3;
+                    group.add(tail2);
+
+                    const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
+                    positionLight.position.set(0, 0.3, -1.8);
+                    group.add(positionLight);
+                } else {
+                    // Default narrow-body jet or regional
+                    fuselageMat = getPooledMaterial('phong', { color: 0xffffff, emissive: 0x222222 });
+                    const fuselage = new THREE.Mesh(_sharedGeometries.solid.fuselage, fuselageMat);
+                    fuselage.rotation.x = Math.PI / 2;
+                    group.add(fuselage);
+
+                    noseMat = getPooledMaterial('phong', { color: color, emissive: color, emissiveIntensity: 0.3 });
+                    const nose = new THREE.Mesh(_sharedGeometries.solid.nose, noseMat);
+                    nose.rotation.x = -Math.PI / 2;
+                    nose.position.z = 2.6;
+                    group.add(nose);
+
+                    wingMat = getPooledMaterial('phong', { color: 0xcccccc, emissive: 0x333333 });
+                    const wings = new THREE.Mesh(_sharedGeometries.solid.wing, wingMat);
+                    group.add(wings);
+
+                    const tailFin = new THREE.Mesh(_sharedGeometries.solid.tailFin, wingMat);
+                    tailFin.position.set(0, 0.6, -1.8);
+                    group.add(tailFin);
+
+                    const hStab = new THREE.Mesh(_sharedGeometries.solid.hStab, wingMat);
+                    hStab.position.set(0, 0, -1.8);
+                    group.add(hStab);
+
+                    const engineMat = getPooledMaterial('phong', { color: 0x444444 });
+                    [-1.2, 1.2].forEach(xPos => {
+                        const engine = new THREE.Mesh(_sharedGeometries.solid.engine, engineMat);
+                        engine.rotation.x = Math.PI / 2;
+                        engine.position.set(xPos, -0.3, 0.2);
+                        group.add(engine);
+                    });
+
+                    const lightMat = getPooledMaterial('basic', { color: 0xff0000, transparent: true });
+                    positionLight = new THREE.Mesh(_sharedGeometries.solid.light, lightMat);
+                    positionLight.position.set(0, 0.3, -1.5);
+                    group.add(positionLight);
+                }
 
                 group.userData = {
                     ...data,
+                    category: category,
                     noseMaterial: noseMat,
                     wingMaterial: wingMat,
                     fuselageMaterial: fuselageMat,
@@ -2888,11 +3747,16 @@
             document.getElementById('sel-squawk').textContent = plane.userData.squawk || '--';
             document.getElementById('sel-position').textContent =
                 `${(plane.userData.lat || 0).toFixed(4)}°, ${(plane.userData.lon || 0).toFixed(4)}°`;
+
+            // Fetch and display enriched aircraft information
+            updateEnrichedInfo(plane);
         }
 
         function deselectPlane() {
             selectedPlane = null;
+            followSelectedPlane = false;
             document.getElementById('selected-plane').style.display = 'none';
+            document.getElementById('aircraft-enriched-info').classList.remove('visible');
         }
 
         function onWindowResize() {
@@ -2999,7 +3863,7 @@
             const needsLabelRedraw = now - lastLabelUpdate > 1000;
             const updateLabelPositions = !needsLabelRedraw && showLabels;
 
-            // Single combined loop for lights and label positions
+            // Single combined loop for lights, rotors, and label positions
             let anyLightChange = false;
             for (let i = 0, len = _airplanesArray.length; i < len; i++) {
                 const plane = _airplanesArray[i];
@@ -3015,6 +3879,20 @@
                         plane.userData.positionLight.material.opacity = brightness;
                         anyLightChange = true;
                     }
+                }
+
+                // Animate rotors and propellers
+                if (plane.userData.category === 'helicopter' || plane.userData.category === 'small') {
+                    plane.children.forEach(child => {
+                        if (child.userData && child.userData.isRotor) {
+                            child.rotation.y += 0.5; // Fast rotation for helicopter rotor
+                            anyLightChange = true;
+                        }
+                        if (child.userData && child.userData.isProp) {
+                            child.rotation.z += 0.4; // Propeller rotation
+                            anyLightChange = true;
+                        }
+                    });
                 }
 
                 // Update label positions between full redraws
@@ -3061,6 +3939,17 @@
                 _needsRender = true;
             }
 
+            // Update timeline
+            updateTimelinePlayback();
+
+            // Update stats dashboard (every 2 seconds)
+            if (showStatsDashboard && (now % 2000) < 100) {
+                updateStatsDashboard();
+            }
+
+            // Update follow mode
+            updateFollowMode();
+
             // Render only when needed (or throttle to max fps)
             if (_needsRender || now - _renderThrottleTime > RENDER_THROTTLE_MS) {
                 renderer.render(scene, camera);
@@ -3069,13 +3958,722 @@
             }
         }
 
+        // ===========================================
+        // KEYBOARD SHORTCUTS
+        // ===========================================
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Ignore if typing in an input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+                const key = e.key.toLowerCase();
+
+                // Help overlay toggle
+                if (key === '?' || (key === '/' && e.shiftKey)) {
+                    toggleKeyboardHelp();
+                    e.preventDefault();
+                    return;
+                }
+
+                // Close help or deselect with Escape
+                if (key === 'escape') {
+                    if (document.getElementById('keyboard-help').classList.contains('visible')) {
+                        toggleKeyboardHelp();
+                    } else if (showTimeline) {
+                        toggleTimeline();
+                    } else if (selectedPlane) {
+                        deselectPlane();
+                    }
+                    e.preventDefault();
+                    return;
+                }
+
+                // Navigation - Arrow keys for map pan
+                if (key === 'arrowup') { panMap('up'); e.preventDefault(); }
+                if (key === 'arrowdown') { panMap('down'); e.preventDefault(); }
+                if (key === 'arrowleft') { panMap('left'); e.preventDefault(); }
+                if (key === 'arrowright') { panMap('right'); e.preventDefault(); }
+
+                // Camera zoom
+                if (key === '+' || key === '=') { cameraZoomIn(); e.preventDefault(); }
+                if (key === '-' || key === '_') { cameraZoomOut(); e.preventDefault(); }
+
+                // Camera rotate
+                if (key === '[') { cameraAngle -= 0.1; updateCameraPosition(); e.preventDefault(); }
+                if (key === ']') { cameraAngle += 0.1; updateCameraPosition(); e.preventDefault(); }
+
+                // Reset camera
+                if (key === 'r' && !e.ctrlKey && !e.metaKey) { resetCamera(); e.preventDefault(); }
+
+                // Map zoom with M key
+                if (key === 'm') {
+                    // Wait for next key
+                    const handleMapZoom = (e2) => {
+                        if (e2.key === '+' || e2.key === '=') mapZoomIn();
+                        if (e2.key === '-' || e2.key === '_') mapZoomOut();
+                        document.removeEventListener('keydown', handleMapZoom);
+                    };
+                    document.addEventListener('keydown', handleMapZoom, { once: true });
+                    e.preventDefault();
+                }
+
+                // Toggle labels
+                if (key === 'l') { toggleLabels(); e.preventDefault(); }
+
+                // Toggle graphs
+                if (key === 'g') { toggleGraphs(); e.preventDefault(); }
+
+                // Toggle auto-rotate
+                if (key === 'a') { toggleAutoRotate(); e.preventDefault(); }
+
+                // Cycle trail duration
+                if (key === 't' && !e.ctrlKey) {
+                    const durations = [0, 60, 120, 240];
+                    const currentIdx = durations.indexOf(trailDuration);
+                    const nextIdx = (currentIdx + 1) % durations.length;
+                    setTrailDuration(durations[nextIdx]);
+                    e.preventDefault();
+                }
+
+                // Toggle timeline
+                if (key === 'h') { toggleTimeline(); e.preventDefault(); }
+
+                // Toggle stats dashboard
+                if (key === 'd') { toggleStatsDashboard(); e.preventDefault(); }
+
+                // Theme switching
+                if (key === '1') { changeTheme('day'); e.preventDefault(); }
+                if (key === '2') { changeTheme('night'); e.preventDefault(); }
+                if (key === '3') { changeTheme('retro'); e.preventDefault(); }
+
+                // Aircraft selection with Tab
+                if (key === 'tab') {
+                    e.preventDefault();
+                    selectNextAircraft(e.shiftKey ? -1 : 1);
+                }
+
+                // Follow selected aircraft
+                if (key === 'f' && selectedPlane) {
+                    followSelectedPlane = !followSelectedPlane;
+                    e.preventDefault();
+                }
+
+                // Timeline controls (when timeline is open)
+                if (showTimeline) {
+                    if (key === ' ') { timelinePlayPause(); e.preventDefault(); }
+                    if (key === ',') { timelineStepBack(); e.preventDefault(); }
+                    if (key === '.') { timelineStepForward(); e.preventDefault(); }
+                    if (key === 'home') { timelineGoLive(); e.preventDefault(); }
+                }
+            });
+        }
+
+        function toggleKeyboardHelp() {
+            const help = document.getElementById('keyboard-help');
+            help.classList.toggle('visible');
+        }
+
+        function selectNextAircraft(direction) {
+            if (_airplanesArrayDirty) {
+                _airplanesArray = Array.from(airplanes.values());
+                _airplanesArrayDirty = false;
+            }
+            if (_airplanesArray.length === 0) return;
+
+            let currentIndex = -1;
+            if (selectedPlane) {
+                currentIndex = _airplanesArray.findIndex(p => p.userData.hex === selectedPlane.userData.hex);
+            }
+
+            let nextIndex = currentIndex + direction;
+            if (nextIndex < 0) nextIndex = _airplanesArray.length - 1;
+            if (nextIndex >= _airplanesArray.length) nextIndex = 0;
+
+            selectPlane(_airplanesArray[nextIndex]);
+        }
+
+        // ===========================================
+        // MOBILE TOUCH CONTROLS
+        // ===========================================
+        function setupTouchControls() {
+            const canvas = renderer.domElement;
+
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+        }
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                isTwoFingerGesture = true;
+
+                // Calculate initial distance and angle for pinch/rotate
+                const dx = e.touches[1].clientX - e.touches[0].clientX;
+                const dy = e.touches[1].clientY - e.touches[0].clientY;
+                touchStartDistance = Math.sqrt(dx * dx + dy * dy);
+                touchStartAngle = Math.atan2(dy, dx);
+
+                // Store center point
+                lastTouchCenter = {
+                    x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                    y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+                };
+            } else if (e.touches.length === 1) {
+                isTwoFingerGesture = false;
+                previousMousePosition = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (e.touches.length === 2 && isTwoFingerGesture) {
+                e.preventDefault();
+
+                const dx = e.touches[1].clientX - e.touches[0].clientX;
+                const dy = e.touches[1].clientY - e.touches[0].clientY;
+                const currentDistance = Math.sqrt(dx * dx + dy * dy);
+                const currentAngle = Math.atan2(dy, dx);
+
+                // Pinch to zoom
+                const distanceRatio = currentDistance / touchStartDistance;
+                if (Math.abs(distanceRatio - 1) > 0.01) {
+                    const zoomDelta = (1 - distanceRatio) * 50;
+                    cameraDistance = Math.max(30, Math.min(500, cameraDistance + zoomDelta));
+                    touchStartDistance = currentDistance;
+                    updateCameraPosition();
+                }
+
+                // Two-finger rotate
+                const angleDelta = currentAngle - touchStartAngle;
+                if (Math.abs(angleDelta) > 0.01) {
+                    cameraAngle += angleDelta;
+                    touchStartAngle = currentAngle;
+                    updateCameraPosition();
+                }
+
+                // Two-finger pan
+                const currentCenter = {
+                    x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                    y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+                };
+                const panDeltaX = currentCenter.x - lastTouchCenter.x;
+                const panDeltaY = currentCenter.y - lastTouchCenter.y;
+
+                if (Math.abs(panDeltaX) > 10) {
+                    panMap(panDeltaX > 0 ? 'right' : 'left');
+                    lastTouchCenter.x = currentCenter.x;
+                }
+                if (Math.abs(panDeltaY) > 10) {
+                    panMap(panDeltaY > 0 ? 'down' : 'up');
+                    lastTouchCenter.y = currentCenter.y;
+                }
+
+                _needsRender = true;
+            } else if (e.touches.length === 1 && !isTwoFingerGesture) {
+                // Single finger drag for camera orbit
+                const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+                cameraAngle += deltaX * 0.01;
+                cameraHeight = Math.max(10, Math.min(300, cameraHeight - deltaY * 0.5));
+
+                updateCameraPosition();
+                previousMousePosition = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (e.touches.length < 2) {
+                isTwoFingerGesture = false;
+            }
+            if (e.touches.length === 1) {
+                previousMousePosition = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            }
+        }
+
+        // ===========================================
+        // TIMELINE FUNCTIONS
+        // ===========================================
+        window.toggleTimeline = function() {
+            showTimeline = !showTimeline;
+            const panel = document.getElementById('timeline-panel');
+            const btn = document.getElementById('btn-timeline');
+
+            if (showTimeline) {
+                panel.classList.add('visible');
+                btn.classList.add('active');
+            } else {
+                panel.classList.remove('visible');
+                btn.classList.remove('active');
+                // Return to live when closing
+                timelineGoLive();
+            }
+        };
+
+        window.timelinePlayPause = function() {
+            timelineIsPlaying = !timelineIsPlaying;
+            const btn = document.getElementById('btn-play-pause');
+            btn.textContent = timelineIsPlaying ? '⏸' : '▶';
+
+            if (timelineIsPlaying && timelinePosition >= 100) {
+                // Start from beginning if at live
+                timelinePosition = 0;
+                document.getElementById('timeline-slider').value = 0;
+            }
+        };
+
+        window.timelineStepBack = function() {
+            timelineIsPlaying = false;
+            document.getElementById('btn-play-pause').textContent = '▶';
+            timelinePosition = Math.max(0, timelinePosition - 1);
+            document.getElementById('timeline-slider').value = timelinePosition;
+            updateTimelineDisplay();
+        };
+
+        window.timelineStepForward = function() {
+            timelineIsPlaying = false;
+            document.getElementById('btn-play-pause').textContent = '▶';
+            timelinePosition = Math.min(100, timelinePosition + 1);
+            document.getElementById('timeline-slider').value = timelinePosition;
+            updateTimelineDisplay();
+        };
+
+        window.timelineGoLive = function() {
+            timelineIsPlaying = false;
+            document.getElementById('btn-play-pause').textContent = '▶';
+            timelinePosition = 100;
+            document.getElementById('timeline-slider').value = 100;
+            document.getElementById('timeline-mode').textContent = 'LIVE';
+            document.getElementById('timeline-time').textContent = 'Now';
+        };
+
+        function captureTimelineSnapshot() {
+            const now = Date.now();
+            if (now - lastTimelineSnapshot < TIMELINE_SNAPSHOT_INTERVAL) return;
+            lastTimelineSnapshot = now;
+
+            // Capture current aircraft state
+            const snapshot = {
+                timestamp: now,
+                aircraft: []
+            };
+
+            for (const [hex, plane] of airplanes.entries()) {
+                snapshot.aircraft.push({
+                    hex: plane.userData.hex,
+                    lat: plane.userData.lat,
+                    lon: plane.userData.lon,
+                    altitude: plane.userData.altitude,
+                    track: plane.userData.track,
+                    gs: plane.userData.gs,
+                    flight: plane.userData.flight,
+                    squawk: plane.userData.squawk
+                });
+            }
+
+            timelineHistory.push(snapshot);
+
+            // Trim old history
+            while (timelineHistory.length > TIMELINE_HISTORY_MAX) {
+                timelineHistory.shift();
+            }
+        }
+
+        function updateTimelineDisplay() {
+            if (timelineHistory.length === 0 || timelinePosition >= 100) {
+                document.getElementById('timeline-mode').textContent = 'LIVE';
+                document.getElementById('timeline-time').textContent = 'Now';
+                return;
+            }
+
+            const historyIndex = Math.floor((timelinePosition / 100) * (timelineHistory.length - 1));
+            const snapshot = timelineHistory[Math.min(historyIndex, timelineHistory.length - 1)];
+
+            if (snapshot) {
+                document.getElementById('timeline-mode').textContent = 'REPLAY';
+                const date = new Date(snapshot.timestamp);
+                document.getElementById('timeline-time').textContent = date.toLocaleTimeString();
+            }
+        }
+
+        function updateTimelinePlayback() {
+            if (!showTimeline) return;
+
+            // Capture snapshots while live
+            if (timelinePosition >= 100) {
+                captureTimelineSnapshot();
+            }
+
+            // Handle playback
+            if (timelineIsPlaying && timelinePosition < 100) {
+                timelinePosition += 0.1; // Adjust speed here
+                if (timelinePosition >= 100) {
+                    timelinePosition = 100;
+                    timelineIsPlaying = false;
+                    document.getElementById('btn-play-pause').textContent = '▶';
+                }
+                document.getElementById('timeline-slider').value = timelinePosition;
+                updateTimelineDisplay();
+            }
+        }
+
+        // Timeline slider event
+        document.getElementById('timeline-slider').addEventListener('input', (e) => {
+            timelinePosition = parseFloat(e.target.value);
+            timelineIsPlaying = false;
+            document.getElementById('btn-play-pause').textContent = '▶';
+            updateTimelineDisplay();
+        });
+
+        // ===========================================
+        // STATS DASHBOARD FUNCTIONS
+        // ===========================================
+        window.toggleStatsDashboard = function() {
+            showStatsDashboard = !showStatsDashboard;
+            const panel = document.getElementById('stats-dashboard');
+            const btn = document.getElementById('btn-stats');
+
+            if (showStatsDashboard) {
+                panel.classList.add('visible');
+                btn.classList.add('active');
+                updateStatsDashboard();
+            } else {
+                panel.classList.remove('visible');
+                btn.classList.remove('active');
+            }
+        };
+
+        function updateStatsDashboard() {
+            if (!showStatsDashboard) return;
+
+            // Update unique aircraft count
+            document.getElementById('stats-total-tracked').textContent = uniqueAircraftSeen.size;
+            document.getElementById('stats-max-concurrent').textContent = maxConcurrentAircraft;
+
+            // Calculate average altitude
+            let totalAlt = 0, altCount = 0;
+            const altBuckets = [0, 0, 0, 0, 0]; // <5k, 5-15k, 15-30k, 30-40k, >40k
+
+            if (_airplanesArrayDirty) {
+                _airplanesArray = Array.from(airplanes.values());
+                _airplanesArrayDirty = false;
+            }
+
+            for (const plane of _airplanesArray) {
+                const alt = plane.userData.altitude || 0;
+                totalAlt += alt;
+                altCount++;
+
+                // Bucket altitude
+                if (alt < 5000) altBuckets[0]++;
+                else if (alt < 15000) altBuckets[1]++;
+                else if (alt < 30000) altBuckets[2]++;
+                else if (alt < 40000) altBuckets[3]++;
+                else altBuckets[4]++;
+
+                // Track unique aircraft
+                if (plane.userData.hex) {
+                    uniqueAircraftSeen.add(plane.userData.hex);
+                }
+
+                // Track aircraft types (if available)
+                const flight = plane.userData.flight || '';
+                if (flight) {
+                    const airline = flight.substring(0, 3);
+                    aircraftTypeStats.set(airline, (aircraftTypeStats.get(airline) || 0) + 1);
+                }
+
+                // Update coverage heatmap
+                if (plane.userData.lat && plane.userData.lon && window.mapBounds) {
+                    const bounds = window.mapBounds;
+                    const normX = (plane.userData.lon - bounds.west) / (bounds.east - bounds.west);
+                    const normY = (plane.userData.lat - bounds.south) / (bounds.north - bounds.south);
+                    if (normX >= 0 && normX < 1 && normY >= 0 && normY < 1) {
+                        const gridX = Math.floor(normX * 20);
+                        const gridY = Math.floor(normY * 20);
+                        const idx = gridY * 20 + gridX;
+                        coverageHeatmap[idx] = Math.min(255, coverageHeatmap[idx] + 1);
+                    }
+                }
+            }
+
+            // Update max concurrent
+            if (_airplanesArray.length > maxConcurrentAircraft) {
+                maxConcurrentAircraft = _airplanesArray.length;
+            }
+
+            // Display average altitude
+            const avgAlt = altCount > 0 ? Math.round(totalAlt / altCount) : 0;
+            document.getElementById('stats-avg-altitude').textContent = formatAltitude(avgAlt);
+
+            // Calculate data quality (% with position)
+            let withPosition = 0;
+            for (const plane of _airplanesArray) {
+                if (plane.userData.lat && plane.userData.lon) withPosition++;
+            }
+            const quality = altCount > 0 ? Math.round((withPosition / altCount) * 100) : 0;
+            document.getElementById('stats-data-quality').textContent = quality + '%';
+
+            // Update altitude distribution bars
+            const maxBucket = Math.max(...altBuckets, 1);
+            for (let i = 0; i < 5; i++) {
+                const pct = (altBuckets[i] / maxBucket) * 100;
+                document.getElementById(`alt-bar-${i}`).style.width = pct + '%';
+                document.getElementById(`alt-count-${i}`).textContent = altBuckets[i];
+            }
+
+            // Update top aircraft types/airlines
+            const sortedTypes = Array.from(aircraftTypeStats.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            const typesHtml = sortedTypes.map(([code, count]) =>
+                `<div style="display:flex;justify-content:space-between;padding:2px 0;">
+                    <span>${code}</span><span style="font-weight:bold;">${count}</span>
+                </div>`
+            ).join('');
+            document.getElementById('top-aircraft-types').innerHTML = typesHtml || '<em>No data</em>';
+
+            // Draw coverage heatmap
+            drawCoverageHeatmap();
+        }
+
+        function drawCoverageHeatmap() {
+            const canvas = document.getElementById('coverage-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const cellW = rect.width / 20;
+            const cellH = rect.height / 20;
+
+            const isRetro = currentTheme === 'retro';
+            const maxVal = Math.max(...coverageHeatmap, 1);
+
+            for (let y = 0; y < 20; y++) {
+                for (let x = 0; x < 20; x++) {
+                    const val = coverageHeatmap[y * 20 + x];
+                    const intensity = val / maxVal;
+
+                    if (isRetro) {
+                        ctx.fillStyle = `rgba(0, ${Math.floor(255 * intensity)}, 0, ${0.2 + intensity * 0.8})`;
+                    } else if (currentTheme === 'night') {
+                        ctx.fillStyle = `rgba(0, ${Math.floor(180 + 75 * intensity)}, ${Math.floor(255 * intensity)}, ${0.2 + intensity * 0.8})`;
+                    } else {
+                        ctx.fillStyle = `rgba(0, ${Math.floor(100 + 155 * intensity)}, ${Math.floor(255 * intensity)}, ${0.2 + intensity * 0.8})`;
+                    }
+
+                    ctx.fillRect(x * cellW, (19 - y) * cellH, cellW - 1, cellH - 1);
+                }
+            }
+        }
+
+        // ===========================================
+        // AIRCRAFT INFORMATION ENRICHMENT
+        // ===========================================
+        async function checkEnrichmentApiAvailability() {
+            // Try to check if we have internet access and can reach external APIs
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 3000);
+                const response = await fetch('https://hexdb.io/api/v1/aircraft/a00001', {
+                    method: 'HEAD',
+                    signal: controller.signal
+                });
+                clearTimeout(timeout);
+                enrichmentApiAvailable = response.ok;
+            } catch (e) {
+                enrichmentApiAvailable = false;
+            }
+            console.log('Aircraft enrichment API available:', enrichmentApiAvailable);
+        }
+
+        async function fetchAircraftInfo(hex) {
+            if (!hex || enrichmentApiAvailable === false) return null;
+
+            // Check cache first
+            if (aircraftInfoCache.has(hex)) {
+                return aircraftInfoCache.get(hex);
+            }
+
+            try {
+                // Try hexdb.io API (free, no auth required)
+                const response = await fetch(`https://hexdb.io/api/v1/aircraft/${hex}`, {
+                    cache: 'force-cache'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const info = {
+                        registration: data.Registration || null,
+                        manufacturer: data.Manufacturer || null,
+                        type: data.Type || null,
+                        model: data.ICAOTypeCode || null,
+                        operator: data.RegisteredOwners || null,
+                        country: data.OperatorFlagCode || null
+                    };
+                    aircraftInfoCache.set(hex, info);
+                    return info;
+                }
+            } catch (e) {
+                // API not available
+            }
+
+            // Cache null result to avoid repeated failed requests
+            aircraftInfoCache.set(hex, null);
+            return null;
+        }
+
+        async function updateEnrichedInfo(plane) {
+            const enrichedPanel = document.getElementById('aircraft-enriched-info');
+            const loadingEl = document.getElementById('enriched-loading');
+            const dataEl = document.getElementById('enriched-data');
+
+            if (!plane || enrichmentApiAvailable === false) {
+                enrichedPanel.classList.remove('visible');
+                return;
+            }
+
+            enrichedPanel.classList.add('visible');
+            loadingEl.style.display = 'block';
+            dataEl.style.display = 'none';
+
+            const info = await fetchAircraftInfo(plane.userData.hex);
+
+            if (info) {
+                document.getElementById('sel-registration').textContent = info.registration || '--';
+                document.getElementById('sel-aircraft-type').textContent =
+                    [info.manufacturer, info.type].filter(Boolean).join(' ') || '--';
+                document.getElementById('sel-operator').textContent = info.operator || '--';
+                document.getElementById('sel-origin').textContent = '--'; // Would need flight tracking API
+                document.getElementById('sel-destination').textContent = '--';
+
+                // Update external links
+                const callsign = plane.userData.flight || '';
+                const hex = plane.userData.hex;
+                document.getElementById('link-flightaware').href =
+                    callsign ? `https://flightaware.com/live/flight/${callsign.trim()}` : '#';
+                document.getElementById('link-fr24').href =
+                    callsign ? `https://www.flightradar24.com/${callsign.trim()}` : '#';
+                document.getElementById('link-adsbx').href =
+                    hex ? `https://globe.adsbexchange.com/?icao=${hex}` : '#';
+
+                loadingEl.style.display = 'none';
+                dataEl.style.display = 'block';
+            } else {
+                // No data available, hide enriched panel
+                enrichedPanel.classList.remove('visible');
+            }
+        }
+
+        // ===========================================
+        // AIRCRAFT TYPE DIFFERENTIATION
+        // ===========================================
+        // Determine aircraft category based on available data
+        function getAircraftCategory(data) {
+            const flight = (data.flight || '').trim().toUpperCase();
+            const alt = data.altitude || 0;
+            const speed = data.gs || 0;
+
+            // Check for helicopter patterns (low altitude, low speed, specific callsigns)
+            if (alt < 3000 && speed < 150) {
+                if (flight.match(/^(N\d|LIFE|MED|HELI|COAST|RESCUE)/)) {
+                    return 'helicopter';
+                }
+            }
+
+            // Military patterns
+            if (flight.match(/^(RCH|REACH|DUKE|EVAC|SPAR|EXEC|AIR|FORCE|NAVY|ARMY|TOPCAT|HAWK)/)) {
+                return 'military';
+            }
+
+            // Small aircraft (low altitude, slow speed, GA callsigns)
+            if (alt < 10000 && speed < 200) {
+                if (flight.match(/^N\d/) || flight === '') {
+                    return 'small';
+                }
+            }
+
+            // Regional jets (medium altitude, medium speed)
+            if (alt < 30000 && speed < 400) {
+                return 'regional';
+            }
+
+            // Wide-body indicators (heavy suffix patterns, long-haul routes)
+            if (flight.match(/(UAE|QTR|SIA|CPA|BAW|DLH|AFR|KLM|ANA|JAL)/)) {
+                return 'widebody';
+            }
+
+            // Default to narrow-body jet
+            return 'jet';
+        }
+
+        // Extended createAirplane function is handled in original - add category info to userData
+        // We'll modify the existing function to include category
+
+        // ===========================================
+        // FOLLOW AIRCRAFT FEATURE
+        // ===========================================
+        function updateFollowMode() {
+            if (!followSelectedPlane || !selectedPlane) return;
+
+            const plane = airplanes.get(selectedPlane.userData.hex);
+            if (!plane) {
+                followSelectedPlane = false;
+                return;
+            }
+
+            // Center map on selected aircraft
+            if (plane.userData.lat && plane.userData.lon) {
+                const targetLat = plane.userData.lat;
+                const targetLon = plane.userData.lon;
+
+                // Smooth transition if not already transitioning
+                if (!mapTransition.active) {
+                    const distLat = Math.abs(centerLat - targetLat);
+                    const distLon = Math.abs(centerLon - targetLon);
+
+                    // Only transition if aircraft moved significantly
+                    if (distLat > 0.01 || distLon > 0.01) {
+                        startMapTransition(targetLat, targetLon, currentZoom);
+                    }
+                }
+            }
+        }
+
         // Initialize
         init();
+
+        // Check enrichment API availability on load
+        checkEnrichmentApiAvailability();
 
         // Set button states based on loaded settings
         document.getElementById('btn-labels').classList.toggle('active', showLabels);
         document.getElementById('btn-rotate').classList.toggle('active', autoRotate);
         document.getElementById('btn-graphs').classList.toggle('active', showGraphs);
+        document.getElementById('btn-timeline').classList.toggle('active', showTimeline);
+        document.getElementById('btn-stats').classList.toggle('active', showStatsDashboard);
+
+        // Initialize stats dashboard update interval
+        setInterval(() => {
+            if (showStatsDashboard) updateStatsDashboard();
+        }, 2000);
+
+        // Capture timeline snapshots regularly
+        setInterval(captureTimelineSnapshot, TIMELINE_SNAPSHOT_INTERVAL);
     </script>
 </body>
 </html>

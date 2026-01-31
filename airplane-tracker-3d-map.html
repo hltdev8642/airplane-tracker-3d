@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Airplane Tracker with Map</title>
+    <title>3D Airplane Tracker - Live ADS-B Data</title>
     <style>
         * {
             margin: 0;
@@ -326,6 +326,51 @@
         .graphs1090-status.local {
             background: rgba(255, 150, 0, 0.3);
             color: #ffaa00;
+        }
+
+        /* Data source status indicator */
+        .data-status {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        .data-status.connected {
+            background: rgba(0, 200, 100, 0.3);
+            color: #00cc66;
+        }
+        .data-status.connecting {
+            background: rgba(255, 150, 0, 0.3);
+            color: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+        .data-status.error {
+            background: rgba(255, 50, 50, 0.3);
+            color: #ff4444;
+        }
+        .theme-retro .data-status.connected {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+        .theme-retro .data-status.connecting {
+            background: rgba(0, 255, 0, 0.1);
+            color: #00cc00;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Radius slider styles */
+        #radius-slider {
+            width: 80px;
+            cursor: pointer;
+        }
+        #radius-value {
+            font-size: 0.75em;
+            min-width: 50px;
+            margin-left: 5px;
         }
 
         .graph-card {
@@ -745,7 +790,7 @@
     <div id="container"></div>
 
     <div id="info-panel">
-        <h2>3D Flight Tracker</h2>
+        <h2>🛩️ Live Flight Tracker</h2>
         <div class="stat">
             <span class="stat-label">Aircraft Tracked:</span>
             <span class="stat-value" id="plane-count">0</span>
@@ -761,6 +806,10 @@
         <div class="stat">
             <span class="stat-label">Map Zoom:</span>
             <span class="stat-value" id="map-zoom">9</span>
+        </div>
+        <div class="stat" style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">
+            <span class="stat-label">Data:</span>
+            <span class="stat-value" id="data-info">Web ADS-B</span>
         </div>
         <!-- Expandable Stats Section -->
         <div id="stats-section">
@@ -882,7 +931,7 @@
     </div>
 
     <div id="graphs-panel">
-        <h3>ADS-B Statistics <span class="graphs1090-status local" id="graphs-status">Local DB</span></h3>
+        <h3>ADS-B Statistics <span class="graphs1090-status local" id="graphs-status">Web Data</span></h3>
 
         <div class="time-period-selector">
             <button class="time-period-btn active" onclick="setGraphsTimePeriod(3600)" data-period="3600">1h</button>
@@ -930,6 +979,47 @@
     </div>
 
     <div id="controls">
+        <div class="control-group">
+            <span class="control-label">Location:</span>
+            <select id="location-select" onchange="changeLocation(this.value)">
+                <option value="new-york">New York</option>
+                <option value="london">London</option>
+                <option value="los-angeles">Los Angeles</option>
+                <option value="tokyo">Tokyo</option>
+                <option value="paris">Paris</option>
+                <option value="sydney">Sydney</option>
+                <option value="dubai">Dubai</option>
+                <option value="singapore">Singapore</option>
+                <option value="chicago">Chicago</option>
+                <option value="frankfurt">Frankfurt</option>
+                <option value="atlanta">Atlanta</option>
+                <option value="dallas">Dallas/Fort Worth</option>
+                <option value="denver">Denver</option>
+                <option value="seattle">Seattle</option>
+                <option value="miami">Miami</option>
+                <option value="amsterdam">Amsterdam</option>
+                <option value="hong-kong">Hong Kong</option>
+                <option value="beijing">Beijing</option>
+                <option value="custom">Custom...</option>
+            </select>
+            <button onclick="useMyLocation()" title="Use my location">📍</button>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Radius:</span>
+            <input type="range" id="radius-slider" min="50" max="500" value="250" step="25" oninput="changeRadius(this.value)">
+            <span id="radius-value">250 nm</span>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Source:</span>
+            <select id="source-select" onchange="changeDataSource(this.value)">
+                <option value="adsb-lol">ADSB.lol</option>
+                <option value="opensky">OpenSky</option>
+            </select>
+            <span class="data-status connected" id="data-source-status">ADSB.lol</span>
+        </div>
+
         <div class="control-group">
             <span class="control-label">Theme:</span>
             <select id="theme-select" onchange="changeTheme(this.value)">
@@ -1031,8 +1121,129 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Configuration
-        const DATA_URL = '/dump1090/data/aircraft.json';
-        const REFRESH_INTERVAL = 1000;
+        // ADS-B Data Sources (web-based)
+        const ADSB_SOURCES = {
+            'adsb-lol': {
+                name: 'ADSB.lol',
+                // Get aircraft within a geographic bounding box
+                getUrl: (lat, lon, radius) => {
+                    // radius in nm, API uses lat/lon bounds
+                    const latDelta = radius / 60; // 1 degree = 60nm approx
+                    const lonDelta = radius / (60 * Math.cos(lat * Math.PI / 180));
+                    return `https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/${radius}`;
+                },
+                parseResponse: (data) => {
+                    if (!data.ac) return [];
+                    return data.ac.map(ac => ({
+                        hex: ac.hex || ac.icao,
+                        flight: ac.flight || ac.callsign || '',
+                        lat: ac.lat,
+                        lon: ac.lon,
+                        altitude: ac.alt_baro || ac.alt_geom || ac.altitude || 0,
+                        alt_baro: ac.alt_baro,
+                        alt_geom: ac.alt_geom,
+                        track: ac.track || ac.mag_heading || ac.true_heading || 0,
+                        gs: ac.gs || ac.tas || ac.ias || 0,
+                        baro_rate: ac.baro_rate || ac.geom_rate || 0,
+                        squawk: ac.squawk || '',
+                        category: ac.category || ac.t || '',
+                        type: ac.t || ac.type || '',
+                        registration: ac.r || ac.registration || '',
+                        seen: ac.seen || 0,
+                        messages: ac.messages || 0
+                    }));
+                }
+            },
+            'opensky': {
+                name: 'OpenSky Network',
+                getUrl: (lat, lon, radius) => {
+                    const latDelta = radius / 60;
+                    const lonDelta = radius / (60 * Math.cos(lat * Math.PI / 180));
+                    return `https://opensky-network.org/api/states/all?lamin=${lat-latDelta}&lomin=${lon-lonDelta}&lamax=${lat+latDelta}&lomax=${lon+lonDelta}`;
+                },
+                parseResponse: (data) => {
+                    if (!data.states) return [];
+                    return data.states.map(s => ({
+                        hex: s[0],
+                        flight: (s[1] || '').trim(),
+                        lat: s[6],
+                        lon: s[5],
+                        altitude: (s[13] || s[7] || 0) * 3.28084, // meters to feet
+                        alt_baro: s[7] ? s[7] * 3.28084 : null,
+                        alt_geom: s[13] ? s[13] * 3.28084 : null,
+                        track: s[10] || 0,
+                        gs: (s[9] || 0) * 1.94384, // m/s to knots
+                        baro_rate: (s[11] || 0) * 196.85, // m/s to ft/min
+                        squawk: s[14] || '',
+                        category: '',
+                        type: '',
+                        registration: '',
+                        seen: 0,
+                        messages: 0
+                    })).filter(a => a.lat && a.lon);
+                }
+            },
+            'adsbexchange': {
+                name: 'ADS-B Exchange',
+                getUrl: (lat, lon, radius) => {
+                    return `https://adsbexchange.com/api/aircraft/v2/lat/${lat}/lon/${lon}/dist/${radius}/`;
+                },
+                parseResponse: (data) => {
+                    if (!data.ac) return [];
+                    return data.ac.map(ac => ({
+                        hex: ac.hex || ac.icao,
+                        flight: ac.flight || ac.callsign || '',
+                        lat: ac.lat,
+                        lon: ac.lon,
+                        altitude: ac.alt_baro || ac.alt_geom || 0,
+                        alt_baro: ac.alt_baro,
+                        alt_geom: ac.alt_geom,
+                        track: ac.track || 0,
+                        gs: ac.gs || 0,
+                        baro_rate: ac.baro_rate || 0,
+                        squawk: ac.squawk || '',
+                        category: ac.category || '',
+                        type: ac.t || '',
+                        registration: ac.r || '',
+                        seen: ac.seen || 0,
+                        messages: ac.messages || 0
+                    }));
+                }
+            }
+        };
+
+        // Default data source and location settings
+        let currentDataSource = 'adsb-lol';
+        let viewLatitude = 40.7128;  // Default: New York City
+        let viewLongitude = -74.0060;
+        let viewRadius = 250; // nautical miles
+        let dataSourceWorking = true;
+        let lastFetchError = null;
+
+        // Predefined locations for easy selection
+        const PRESET_LOCATIONS = {
+            'new-york': { name: 'New York', lat: 40.7128, lon: -74.0060 },
+            'london': { name: 'London', lat: 51.5074, lon: -0.1278 },
+            'los-angeles': { name: 'Los Angeles', lat: 34.0522, lon: -118.2437 },
+            'tokyo': { name: 'Tokyo', lat: 35.6762, lon: 139.6503 },
+            'paris': { name: 'Paris', lat: 48.8566, lon: 2.3522 },
+            'sydney': { name: 'Sydney', lat: -33.8688, lon: 151.2093 },
+            'dubai': { name: 'Dubai', lat: 25.2048, lon: 55.2708 },
+            'singapore': { name: 'Singapore', lat: 1.3521, lon: 103.8198 },
+            'chicago': { name: 'Chicago', lat: 41.8781, lon: -87.6298 },
+            'frankfurt': { name: 'Frankfurt', lat: 50.1109, lon: 8.6821 },
+            'atlanta': { name: 'Atlanta', lat: 33.6407, lon: -84.4277 },
+            'dallas': { name: 'Dallas/Fort Worth', lat: 32.8998, lon: -97.0403 },
+            'denver': { name: 'Denver', lat: 39.8561, lon: -104.6737 },
+            'seattle': { name: 'Seattle', lat: 47.4502, lon: -122.3088 },
+            'miami': { name: 'Miami', lat: 25.7959, lon: -80.2870 },
+            'amsterdam': { name: 'Amsterdam', lat: 52.3105, lon: 4.7683 },
+            'hong-kong': { name: 'Hong Kong', lat: 22.3080, lon: 113.9185 },
+            'beijing': { name: 'Beijing', lat: 40.0799, lon: 116.6031 },
+            'custom': { name: 'Custom Location', lat: null, lon: null }
+        };
+
+        const REFRESH_INTERVAL = 3000; // 3 seconds for web API (respect rate limits)
         const MAP_GROUND_SIZE = 800;
         const TILES_PER_SIDE = 10;
         // Altitude scale: 1x-300x range, reduced by 30x (new 300x = old 10x effect)
@@ -1068,7 +1279,12 @@
                 autoRotate: autoRotate,
                 showGraphs: showGraphs,
                 graphsTimePeriod: graphsTimePeriod,
-                altitudeScaleValue: Math.round(altitudeScale / BASE_ALT_SCALE)
+                altitudeScaleValue: Math.round(altitudeScale / BASE_ALT_SCALE),
+                // New web data settings
+                dataSource: currentDataSource,
+                viewLat: viewLatitude,
+                viewLon: viewLongitude,
+                viewRadius: viewRadius
             };
             setCookie('flightTrackerSettings', settings);
         }
@@ -1093,6 +1309,11 @@
                     newScale = Math.max(100, Math.min(30000, newScale));
                     altitudeScale = newScale * BASE_ALT_SCALE;
                 }
+                // Load web data settings
+                if (settings.dataSource) currentDataSource = settings.dataSource;
+                if (settings.viewLat !== undefined) viewLatitude = settings.viewLat;
+                if (settings.viewLon !== undefined) viewLongitude = settings.viewLon;
+                if (settings.viewRadius !== undefined) viewRadius = settings.viewRadius;
             }
         }
 
@@ -1211,7 +1432,6 @@
 
         // Graphs panel state
         let showGraphs = false;
-        let graphs1090Available = false;
         let statsDb = null;
         let graphsTimePeriod = 3600; // Default 1 hour in seconds
         let statsHistory = {
@@ -1220,8 +1440,6 @@
             signalLevel: []
         };
         const STATS_HISTORY_MAX = 172800; // 48 hours at 1s intervals
-        const STATS_URL = '/dump1090/data/stats.json';
-        const GRAPHS1090_CHECK_URL = '/graphs1090/';
 
         // Camera controls
         let cameraAngle = 0;
@@ -1251,7 +1469,7 @@
         let isTwoFingerGesture = false;
 
         // ===========================================
-        // GRAPHS1090 INTEGRATION & LOCAL STATS
+        // WEB ADS-B DATA & LOCAL STATS
         // ===========================================
 
         // Initialize IndexedDB for stats storage
@@ -1417,93 +1635,67 @@
             }
         }
 
-        // Check if graphs1090 is available
-        async function checkGraphs1090() {
-            try {
-                const response = await fetch(GRAPHS1090_CHECK_URL, { method: 'HEAD', cache: 'no-store' });
-                if (response.ok) {
-                    graphs1090Available = true;
-                    document.getElementById('graphs-status').textContent = 'graphs1090';
-                    document.getElementById('graphs-status').classList.remove('local');
-                    document.getElementById('graphs-status').classList.add('connected');
-                    console.log('graphs1090 detected, using its database');
-                    return true;
-                }
-            } catch (e) {
-                // graphs1090 not available
-            }
-
-            graphs1090Available = false;
-            document.getElementById('graphs-status').textContent = 'Local DB';
+        // Update graphs status to show web data source
+        function updateGraphsStatus() {
+            const sourceName = ADSB_SOURCES[currentDataSource]?.name || 'Web Data';
+            document.getElementById('graphs-status').textContent = sourceName;
             document.getElementById('graphs-status').classList.remove('connected');
             document.getElementById('graphs-status').classList.add('local');
-            console.log('graphs1090 not detected, using local database');
-            return false;
+            console.log('Using web ADS-B data from', sourceName);
         }
 
-        // Fetch stats from dump1090 stats.json
+        // For web-based data, we track metrics from the API responses
+        let lastMessageCount = 0;
+        let lastMessageTime = Date.now();
+
         async function fetchStats() {
             const now = Date.now();
 
-            // Always get current aircraft count from the UI
+            // Get current aircraft count from the UI
             const planeCountEl = document.getElementById('plane-count');
             const aircraftCount = planeCountEl ? (parseInt(planeCountEl.textContent) || 0) : 0;
 
-            try {
-                const response = await fetch(STATS_URL, { cache: 'no-store' });
-                const data = await response.json();
-
-                // Extract message rate from last1min
-                let messageRate = 0;
-                if (data.last1min && data.last1min.local) {
-                    const local = data.last1min.local;
-                    const accepted = local.accepted || [0, 0];
-                    const totalAccepted = accepted.reduce((a, b) => a + b, 0);
-                    // Calculate rate per second (last1min data spans ~60 seconds)
-                    const duration = (data.last1min.end || now/1000) - (data.last1min.start || (now/1000 - 60));
-                    messageRate = duration > 0 ? totalAccepted / duration : 0;
-                }
-
-                // Extract signal level
-                let signalLevel = -50; // Default
-                if (data.last1min && data.last1min.local) {
-                    signalLevel = data.last1min.local.signal || -50;
-                }
-
-                // Store in history
-                statsHistory.messageRate.push({ timestamp: now, value: messageRate });
-                statsHistory.aircraftCount.push({ timestamp: now, value: aircraftCount });
-                statsHistory.signalLevel.push({ timestamp: now, value: signalLevel });
-
-                // Trim history
-                if (statsHistory.messageRate.length > STATS_HISTORY_MAX) {
-                    statsHistory.messageRate.shift();
-                }
-                if (statsHistory.aircraftCount.length > STATS_HISTORY_MAX) {
-                    statsHistory.aircraftCount.shift();
-                }
-                if (statsHistory.signalLevel.length > STATS_HISTORY_MAX) {
-                    statsHistory.signalLevel.shift();
-                }
-
-                // Save to IndexedDB
-                saveStatsToDb('messageRate', { timestamp: now, value: messageRate });
-                saveStatsToDb('aircraft', { timestamp: now, count: aircraftCount });
-                saveStatsToDb('signal', { timestamp: now, value: signalLevel });
-
-                // Update display
-                updateGraphsDisplay();
-
-            } catch (error) {
-                // stats.json not available - still track aircraft count
-                statsHistory.aircraftCount.push({ timestamp: now, value: aircraftCount });
-                if (statsHistory.aircraftCount.length > STATS_HISTORY_MAX) {
-                    statsHistory.aircraftCount.shift();
-                }
-
-                saveStatsToDb('aircraft', { timestamp: now, count: aircraftCount });
-                updateGraphsDisplay();
+            // Estimate message rate from aircraft buffer updates
+            // Each aircraft position update represents ~1 message
+            let totalMessages = 0;
+            for (const [hex, buffer] of aircraftDataBuffer.entries()) {
+                totalMessages += buffer.length;
             }
+
+            // Calculate message rate (messages per second since last check)
+            const timeDelta = (now - lastMessageTime) / 1000;
+            const messageDelta = totalMessages - lastMessageCount;
+            const messageRate = timeDelta > 0 ? Math.max(0, messageDelta / timeDelta) : 0;
+
+            lastMessageCount = totalMessages;
+            lastMessageTime = now;
+
+            // Signal level is not available from web APIs, use placeholder
+            const signalLevel = -30; // Placeholder for web data
+
+            // Store in history
+            statsHistory.messageRate.push({ timestamp: now, value: messageRate });
+            statsHistory.aircraftCount.push({ timestamp: now, value: aircraftCount });
+            statsHistory.signalLevel.push({ timestamp: now, value: signalLevel });
+
+            // Trim history
+            if (statsHistory.messageRate.length > STATS_HISTORY_MAX) {
+                statsHistory.messageRate.shift();
+            }
+            if (statsHistory.aircraftCount.length > STATS_HISTORY_MAX) {
+                statsHistory.aircraftCount.shift();
+            }
+            if (statsHistory.signalLevel.length > STATS_HISTORY_MAX) {
+                statsHistory.signalLevel.shift();
+            }
+
+            // Save to IndexedDB
+            saveStatsToDb('messageRate', { timestamp: now, value: messageRate });
+            saveStatsToDb('aircraft', { timestamp: now, count: aircraftCount });
+            saveStatsToDb('signal', { timestamp: now, value: signalLevel });
+
+            // Update display
+            updateGraphsDisplay();
         }
 
         // Filter history data based on selected time period
@@ -1664,7 +1856,7 @@
         // Initialize graphs system
         async function initGraphsSystem() {
             await initStatsDatabase();
-            await checkGraphs1090();
+            updateGraphsStatus();
 
             // Clean up old trails
             cleanupOldTrails();
@@ -1672,9 +1864,6 @@
             // Start fetching stats
             fetchStats();
             setInterval(fetchStats, 1000);
-
-            // Re-check graphs1090 periodically (every 5 minutes)
-            setInterval(checkGraphs1090, 300000);
 
             // Clean up old trails periodically (every hour)
             setInterval(cleanupOldTrails, 3600000);
@@ -1803,6 +1992,25 @@
             document.getElementById('trail-length-slider').value = trailMaxLength;
             document.getElementById('trail-length-value').textContent = trailMaxLength;
             document.getElementById('trail-thickness-slider').value = trailThickness;
+
+            // Apply web data settings to UI
+            document.getElementById('source-select').value = currentDataSource;
+            document.getElementById('radius-slider').value = viewRadius;
+            document.getElementById('radius-value').textContent = viewRadius + ' nm';
+            updateDataSourceStatus();
+
+            // Find matching location preset or use custom
+            let locationFound = false;
+            for (const [key, loc] of Object.entries(PRESET_LOCATIONS)) {
+                if (key !== 'custom' && loc.lat === viewLatitude && loc.lon === viewLongitude) {
+                    document.getElementById('location-select').value = key;
+                    locationFound = true;
+                    break;
+                }
+            }
+            if (!locationFound && viewLatitude !== 40.7128) {
+                document.getElementById('location-select').value = 'custom';
+            }
 
             // Initialize shared geometry pools
             initSharedGeometries();
@@ -3012,33 +3220,50 @@
         }
 
         async function fetchData() {
+            const source = ADSB_SOURCES[currentDataSource];
+            if (!source) {
+                console.error('Unknown data source:', currentDataSource);
+                return;
+            }
+
             try {
-                const response = await fetch(DATA_URL);
-                const data = await response.json();
+                const url = source.getUrl(viewLatitude, viewLongitude, viewRadius);
+                const response = await fetch(url, {
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const rawData = await response.json();
+                const aircraft = source.parseResponse(rawData);
                 const now = Date.now();
 
-                if (data.aircraft && data.aircraft.length > 0) {
+                // Update data source status
+                if (!dataSourceWorking) {
+                    dataSourceWorking = true;
+                    updateDataSourceStatus();
+                }
+                lastFetchError = null;
+
+                if (aircraft && aircraft.length > 0) {
+                    // Initialize center on first successful fetch
                     if (!centerInitialized) {
-                        let sumLat = 0, sumLon = 0, count = 0;
-                        data.aircraft.forEach(ac => {
-                            if (ac.lat && ac.lon) {
-                                sumLat += ac.lat;
-                                sumLon += ac.lon;
-                                count++;
-                            }
-                        });
-                        if (count > 0) {
-                            centerLat = sumLat / count;
-                            centerLon = sumLon / count;
-                            centerInitialized = true;
-                            document.getElementById('center-coords').textContent =
-                                `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
-                            loadMapTiles();
-                        }
+                        // Use view location as initial center
+                        centerLat = viewLatitude;
+                        centerLon = viewLongitude;
+                        centerInitialized = true;
+                        document.getElementById('center-coords').textContent =
+                            `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+                        loadMapTiles();
                     }
 
                     // Store data in buffer with timestamp
-                    data.aircraft.forEach(ac => {
+                    aircraft.forEach(ac => {
                         if (!ac.lat || !ac.lon) return;
 
                         if (!aircraftDataBuffer.has(ac.hex)) {
@@ -3055,7 +3280,7 @@
                     });
 
                     // Clean up old aircraft
-                    const currentHexes = new Set(data.aircraft.map(ac => ac.hex));
+                    const currentHexes = new Set(aircraft.map(ac => ac.hex));
                     for (const [hex, buffer] of aircraftDataBuffer.entries()) {
                         if (!currentHexes.has(hex) && buffer.length > 0) {
                             const lastEntry = buffer[buffer.length - 1];
@@ -3065,13 +3290,240 @@
                         }
                     }
 
-                    document.getElementById('plane-count').textContent = data.aircraft.length;
+                    document.getElementById('plane-count').textContent = aircraft.length;
+                    document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+                } else if (!centerInitialized) {
+                    // No aircraft yet, still initialize map at view location
+                    centerLat = viewLatitude;
+                    centerLon = viewLongitude;
+                    centerInitialized = true;
+                    document.getElementById('center-coords').textContent =
+                        `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+                    loadMapTiles();
+                    document.getElementById('plane-count').textContent = '0';
                     document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching data from', currentDataSource, ':', error);
+                lastFetchError = error.message;
+
+                // Try fallback to OpenSky if primary fails
+                if (currentDataSource === 'adsb-lol' && dataSourceWorking) {
+                    console.log('Trying OpenSky as fallback...');
+                    dataSourceWorking = false;
+                    updateDataSourceStatus();
+                    await tryFallbackSource();
+                }
             }
         }
+
+        // Try fallback data source
+        async function tryFallbackSource() {
+            const fallbackSource = ADSB_SOURCES['opensky'];
+            try {
+                const url = fallbackSource.getUrl(viewLatitude, viewLongitude, viewRadius);
+                const response = await fetch(url, { cache: 'no-store' });
+
+                if (response.ok) {
+                    const rawData = await response.json();
+                    const aircraft = fallbackSource.parseResponse(rawData);
+                    const now = Date.now();
+
+                    if (aircraft && aircraft.length > 0) {
+                        // Switch to OpenSky as primary
+                        currentDataSource = 'opensky';
+                        dataSourceWorking = true;
+                        updateDataSourceStatus();
+                        console.log('Switched to OpenSky Network');
+
+                        // Initialize map if needed
+                        if (!centerInitialized) {
+                            centerLat = viewLatitude;
+                            centerLon = viewLongitude;
+                            centerInitialized = true;
+                            document.getElementById('center-coords').textContent =
+                                `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+                            loadMapTiles();
+                        }
+
+                        // Process aircraft data
+                        aircraft.forEach(ac => {
+                            if (!ac.lat || !ac.lon) return;
+                            if (!aircraftDataBuffer.has(ac.hex)) {
+                                aircraftDataBuffer.set(ac.hex, []);
+                            }
+                            const buffer = aircraftDataBuffer.get(ac.hex);
+                            buffer.push({ timestamp: now, data: {...ac} });
+                        });
+
+                        document.getElementById('plane-count').textContent = aircraft.length;
+                        document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+                    }
+                }
+            } catch (e) {
+                console.error('Fallback source also failed:', e);
+            }
+        }
+
+        // Update data source status indicator
+        function updateDataSourceStatus() {
+            const statusEl = document.getElementById('data-source-status');
+            const infoEl = document.getElementById('data-info');
+            const sourceName = ADSB_SOURCES[currentDataSource]?.name || currentDataSource;
+
+            if (statusEl) {
+                if (dataSourceWorking) {
+                    statusEl.textContent = sourceName;
+                    statusEl.className = 'data-status connected';
+                } else {
+                    statusEl.textContent = 'Connecting...';
+                    statusEl.className = 'data-status connecting';
+                }
+            }
+
+            if (infoEl) {
+                infoEl.textContent = sourceName;
+            }
+
+            // Also update graphs panel status
+            const graphsStatusEl = document.getElementById('graphs-status');
+            if (graphsStatusEl) {
+                graphsStatusEl.textContent = sourceName;
+            }
+        }
+
+        // Change data source
+        window.changeDataSource = function(source) {
+            if (ADSB_SOURCES[source]) {
+                currentDataSource = source;
+                dataSourceWorking = true;
+                lastFetchError = null;
+                updateDataSourceStatus();
+                saveSettings();
+
+                // Clear existing aircraft and refetch
+                aircraftDataBuffer.clear();
+                airplanes.forEach((plane, hex) => {
+                    scene.remove(plane);
+                    if (plane.userData.trail) scene.remove(plane.userData.trail);
+                    if (plane.userData.altLine) scene.remove(plane.userData.altLine);
+                });
+                airplanes.clear();
+                _airplanesArrayDirty = true;
+                document.getElementById('plane-count').textContent = '0';
+
+                fetchData();
+            }
+        };
+
+        // Change view location
+        window.changeLocation = function(locationKey) {
+            const location = PRESET_LOCATIONS[locationKey];
+            if (!location) return;
+
+            if (locationKey === 'custom') {
+                // Show custom location prompt
+                const latInput = prompt('Enter latitude (e.g., 40.7128):', viewLatitude.toString());
+                if (latInput === null) return;
+                const lonInput = prompt('Enter longitude (e.g., -74.0060):', viewLongitude.toString());
+                if (lonInput === null) return;
+
+                const lat = parseFloat(latInput);
+                const lon = parseFloat(lonInput);
+
+                if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                    alert('Invalid coordinates. Latitude must be -90 to 90, longitude -180 to 180.');
+                    return;
+                }
+
+                viewLatitude = lat;
+                viewLongitude = lon;
+            } else {
+                viewLatitude = location.lat;
+                viewLongitude = location.lon;
+            }
+
+            // Reset and reload with new location
+            centerInitialized = false;
+            aircraftDataBuffer.clear();
+
+            // Clear existing aircraft
+            airplanes.forEach((plane, hex) => {
+                scene.remove(plane);
+                if (plane.userData.trail) scene.remove(plane.userData.trail);
+                if (plane.userData.altLine) scene.remove(plane.userData.altLine);
+            });
+            airplanes.clear();
+            _airplanesArrayDirty = true;
+
+            document.getElementById('plane-count').textContent = '0';
+            saveSettings();
+
+            // Update map center
+            centerLat = viewLatitude;
+            centerLon = viewLongitude;
+            centerInitialized = true;
+            document.getElementById('center-coords').textContent =
+                `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+            loadMapTiles();
+
+            // Fetch new data
+            fetchData();
+        };
+
+        // Change view radius
+        window.changeRadius = function(radius) {
+            viewRadius = parseInt(radius) || 250;
+            document.getElementById('radius-value').textContent = viewRadius + ' nm';
+            saveSettings();
+
+            // Refetch with new radius
+            fetchData();
+        };
+
+        // Use browser geolocation
+        window.useMyLocation = function() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    viewLatitude = position.coords.latitude;
+                    viewLongitude = position.coords.longitude;
+
+                    // Update location selector to custom
+                    document.getElementById('location-select').value = 'custom';
+
+                    // Reset and reload
+                    centerInitialized = false;
+                    aircraftDataBuffer.clear();
+
+                    airplanes.forEach((plane, hex) => {
+                        scene.remove(plane);
+                        if (plane.userData.trail) scene.remove(plane.userData.trail);
+                        if (plane.userData.altLine) scene.remove(plane.userData.altLine);
+                    });
+                    airplanes.clear();
+                    _airplanesArrayDirty = true;
+
+                    centerLat = viewLatitude;
+                    centerLon = viewLongitude;
+                    centerInitialized = true;
+                    document.getElementById('center-coords').textContent =
+                        `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
+                    loadMapTiles();
+
+                    saveSettings();
+                    fetchData();
+                },
+                (error) => {
+                    alert('Unable to get your location: ' + error.message);
+                },
+                { enableHighAccuracy: false, timeout: 10000 }
+            );
+        };
 
         // Linear interpolation
         function lerp(a, b, t) {

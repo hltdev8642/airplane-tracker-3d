@@ -784,10 +784,516 @@
                 opacity: 0.8;
             }
         }
+
+        /* Search & Filter Panel */
+        #search-panel {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90vw;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .theme-day #search-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #search-panel {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #search-panel {
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        #search-panel.collapsed {
+            padding: 8px 15px;
+        }
+        #search-panel.collapsed .search-filters {
+            display: none;
+        }
+        #search-input {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.9em;
+            width: 180px;
+            outline: none;
+        }
+        .theme-day #search-input {
+            background: rgba(0, 100, 200, 0.1);
+            color: #333;
+        }
+        .theme-night #search-input {
+            background: rgba(0, 100, 200, 0.3);
+            color: #fff;
+        }
+        .theme-retro #search-input {
+            background: rgba(0, 50, 0, 0.8);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.5);
+        }
+        #search-input::placeholder {
+            opacity: 0.6;
+        }
+        .theme-retro #search-input::placeholder {
+            color: #00aa00;
+        }
+        .search-filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8em;
+        }
+        .filter-group label {
+            opacity: 0.7;
+        }
+        .filter-group select, .filter-group input {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+        .theme-day .filter-group select, .theme-day .filter-group input {
+            background: rgba(0, 100, 200, 0.1);
+            border: 1px solid rgba(0, 100, 200, 0.2);
+            color: #333;
+        }
+        .theme-night .filter-group select, .theme-night .filter-group input {
+            background: rgba(0, 100, 200, 0.3);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+            color: #fff;
+        }
+        .theme-retro .filter-group select, .theme-retro .filter-group input {
+            background: rgba(0, 50, 0, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #00ff00;
+        }
+        #search-results-count {
+            font-size: 0.8em;
+            padding: 4px 10px;
+            border-radius: 10px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .theme-day #search-results-count {
+            background: rgba(0, 150, 100, 0.2);
+            color: #006644;
+        }
+        .theme-night #search-results-count {
+            background: rgba(0, 200, 150, 0.2);
+            color: #00ffaa;
+        }
+        .theme-retro #search-results-count {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+        }
+        #search-clear {
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        #search-toggle {
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        /* Custom Map Tile Layer Panel */
+        #tile-layer-panel {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: none;
+            max-width: 350px;
+            z-index: 100;
+        }
+        #tile-layer-panel.visible {
+            display: block;
+        }
+        .theme-day #tile-layer-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #tile-layer-panel {
+            background: rgba(0, 20, 40, 0.92);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #tile-layer-panel {
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid #00ff00;
+        }
+        #tile-layer-panel h4 {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        .theme-day #tile-layer-panel h4 { color: #0066cc; }
+        .theme-night #tile-layer-panel h4 { color: #00d4ff; }
+        .theme-retro #tile-layer-panel h4 { color: #00ff00; }
+        #custom-tile-url {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+        .theme-day #custom-tile-url {
+            background: #fff;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+        .theme-night #custom-tile-url {
+            background: #1a3a5a;
+            border: 1px solid #0066cc;
+            color: #fff;
+        }
+        .theme-retro #custom-tile-url {
+            background: #001a00;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        .tile-url-hint {
+            font-size: 0.75em;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        .tile-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .tile-preset-btn {
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            cursor: pointer;
+        }
+
+        /* Export Panel */
+        #export-panel {
+            position: absolute;
+            bottom: 100px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: none;
+            min-width: 200px;
+            z-index: 100;
+        }
+        #export-panel.visible {
+            display: block;
+        }
+        .theme-day #export-panel {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 100, 200, 0.3);
+        }
+        .theme-night #export-panel {
+            background: rgba(0, 20, 40, 0.92);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .theme-retro #export-panel {
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid #00ff00;
+        }
+        #export-panel h4 {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        .theme-day #export-panel h4 { color: #0066cc; }
+        .theme-night #export-panel h4 { color: #00d4ff; }
+        .theme-retro #export-panel h4 { color: #00ff00; }
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .export-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Alert notifications */
+        #alert-container {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 280px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .alert-notification {
+            padding: 12px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .alert-notification:hover {
+            transform: scale(1.02);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .alert-emergency {
+            background: rgba(255, 50, 50, 0.9);
+            border: 2px solid #ff0000;
+            color: #fff;
+        }
+        .alert-military {
+            background: rgba(100, 100, 150, 0.9);
+            border: 2px solid #8888ff;
+            color: #fff;
+        }
+        .alert-lowalt {
+            background: rgba(255, 150, 50, 0.9);
+            border: 2px solid #ffaa00;
+            color: #fff;
+        }
+        .theme-retro .alert-notification {
+            border-color: #00ff00;
+            background: rgba(0, 40, 0, 0.95);
+            color: #00ff00;
+        }
+        .alert-icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        .alert-title {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .alert-details {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* Flight path prediction line */
+        .prediction-line {
+            stroke-dasharray: 5, 5;
+        }
+
+        /* Airport markers */
+        .airport-marker-label {
+            pointer-events: none;
+        }
+
+        /* Mobile collapsible controls */
+        #mobile-toggle {
+            display: none;
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            z-index: 200;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .theme-day #mobile-toggle {
+            background: linear-gradient(135deg, #0088ff, #0066cc);
+            color: #fff;
+        }
+        .theme-night #mobile-toggle {
+            background: linear-gradient(135deg, #0066cc, #003399);
+            color: #fff;
+        }
+        .theme-retro #mobile-toggle {
+            background: rgba(0, 40, 0, 0.95);
+            color: #00ff00;
+            border: 2px solid #00ff00;
+        }
+
+        @media (max-width: 768px) {
+            #mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            #controls {
+                transform: translateX(-50%) translateY(100%);
+                opacity: 0;
+                pointer-events: none;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }
+            #controls.mobile-visible {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+            }
+            #search-panel {
+                top: auto;
+                bottom: 90px;
+                left: 10px;
+                right: 10px;
+                transform: none;
+                max-width: 100%;
+            }
+            #search-panel.collapsed {
+                bottom: 90px;
+                width: auto;
+                left: auto;
+                right: 10px;
+            }
+            #info-panel {
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            #selected-plane {
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            #alert-container {
+                top: auto;
+                bottom: 150px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #info-panel {
+                max-width: 45vw;
+                padding: 10px;
+            }
+            #info-panel h2 {
+                font-size: 1em;
+            }
+            #selected-plane {
+                max-width: 50vw;
+                padding: 10px;
+            }
+            #search-panel {
+                padding: 8px 12px;
+            }
+            #search-input {
+                width: 100%;
+            }
+            .search-filters {
+                width: 100%;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .filter-group select {
+                flex: 1;
+            }
+        }
+
+        /* Improved labels styling */
+        .label-enhanced {
+            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body class="theme-retro">
     <div id="container"></div>
+
+    <!-- Search & Filter Panel -->
+    <div id="search-panel">
+        <button id="search-toggle" onclick="toggleSearchPanel()" title="Toggle filters">🔍</button>
+        <input type="text" id="search-input" placeholder="Search callsign..." oninput="filterAircraft()">
+        <div class="search-filters">
+            <div class="filter-group">
+                <label>Alt:</label>
+                <select id="filter-altitude" onchange="filterAircraft()">
+                    <option value="">All</option>
+                    <option value="0-5000">0-5k ft</option>
+                    <option value="5000-15000">5-15k ft</option>
+                    <option value="15000-30000">15-30k ft</option>
+                    <option value="30000-45000">30-45k ft</option>
+                    <option value="45000+">45k+ ft</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Speed:</label>
+                <select id="filter-speed" onchange="filterAircraft()">
+                    <option value="">All</option>
+                    <option value="0-150">0-150 kts</option>
+                    <option value="150-300">150-300 kts</option>
+                    <option value="300-500">300-500 kts</option>
+                    <option value="500+">500+ kts</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Type:</label>
+                <select id="filter-type" onchange="filterAircraft()">
+                    <option value="">All</option>
+                    <option value="jet">Jets</option>
+                    <option value="widebody">Wide-body</option>
+                    <option value="regional">Regional</option>
+                    <option value="small">Small/GA</option>
+                    <option value="helicopter">Helicopters</option>
+                    <option value="military">Military</option>
+                </select>
+            </div>
+            <button id="search-clear" onclick="clearFilters()">Clear</button>
+        </div>
+        <span id="search-results-count">0 shown</span>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alert-container"></div>
+
+    <!-- Export Panel -->
+    <div id="export-panel">
+        <h4>📤 Export Data</h4>
+        <div class="export-options">
+            <button class="export-btn" onclick="exportToCSV()">📄 Export CSV</button>
+            <button class="export-btn" onclick="exportToJSON()">📋 Export JSON</button>
+            <button class="export-btn" onclick="exportFlightHistory()">📚 Export History</button>
+        </div>
+    </div>
+
+    <!-- Custom Tile Layer Panel -->
+    <div id="tile-layer-panel">
+        <h4>🗺️ Custom Map Tiles</h4>
+        <input type="text" id="custom-tile-url" placeholder="https://example.com/{z}/{x}/{y}.png">
+        <div class="tile-url-hint">Format: {z}=zoom, {x}=x tile, {y}=y tile</div>
+        <div class="tile-presets">
+            <button class="tile-preset-btn" onclick="setTilePreset('osm')">OSM</button>
+            <button class="tile-preset-btn" onclick="setTilePreset('carto-dark')">Carto Dark</button>
+            <button class="tile-preset-btn" onclick="setTilePreset('carto-light')">Carto Light</button>
+            <button class="tile-preset-btn" onclick="setTilePreset('stamen-terrain')">Terrain</button>
+            <button class="tile-preset-btn" onclick="setTilePreset('esri-sat')">Satellite</button>
+        </div>
+        <button onclick="applyCustomTiles()" style="width:100%;">Apply Custom Tiles</button>
+    </div>
 
     <div id="info-panel">
         <h2>🛩️ Live Flight Tracker</h2>
@@ -863,6 +1369,31 @@
             </div>
             <h4 style="margin: 12px 0 8px 0; font-size: 0.8em; opacity: 0.8;">Top Airlines</h4>
             <div id="top-aircraft-types" style="font-size: 0.8em;"></div>
+            <h4 style="margin: 12px 0 8px 0; font-size: 0.8em; opacity: 0.8;">Aircraft Types</h4>
+            <div id="aircraft-type-chart" style="font-size: 0.8em;"></div>
+            <h4 style="margin: 12px 0 8px 0; font-size: 0.8em; opacity: 0.8;">Speed Distribution</h4>
+            <div class="speed-distribution" id="speed-distribution">
+                <div class="altitude-bar">
+                    <span class="label">&lt;150 kts</span>
+                    <div class="bar"><div class="fill" id="spd-bar-0" style="width: 0%; background: #00ffff;"></div></div>
+                    <span class="count" id="spd-count-0">0</span>
+                </div>
+                <div class="altitude-bar">
+                    <span class="label">150-300</span>
+                    <div class="bar"><div class="fill" id="spd-bar-1" style="width: 0%; background: #00ff88;"></div></div>
+                    <span class="count" id="spd-count-1">0</span>
+                </div>
+                <div class="altitude-bar">
+                    <span class="label">300-450</span>
+                    <div class="bar"><div class="fill" id="spd-bar-2" style="width: 0%; background: #ffff00;"></div></div>
+                    <span class="count" id="spd-count-2">0</span>
+                </div>
+                <div class="altitude-bar">
+                    <span class="label">&gt;450 kts</span>
+                    <div class="bar"><div class="fill" id="spd-bar-3" style="width: 0%; background: #ff8800;"></div></div>
+                    <span class="count" id="spd-count-3">0</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1081,8 +1612,16 @@
 
         <div class="control-group">
             <button onclick="toggleKeyboardHelp()" id="btn-help" title="Keyboard Shortcuts">?</button>
+            <button onclick="toggleExportPanel()" id="btn-export" title="Export Data">📤</button>
+            <button onclick="toggleTilePanel()" id="btn-tiles" title="Custom Map Tiles">🗺️</button>
+            <button onclick="toggleAirports()" id="btn-airports" title="Toggle Airport Markers">✈️</button>
+            <button onclick="toggleAlerts()" id="btn-alerts" title="Toggle Alerts" class="active">🔔</button>
+            <button onclick="togglePrediction()" id="btn-prediction" title="Toggle Flight Prediction">📍</button>
         </div>
     </div>
+
+    <!-- Mobile toggle button -->
+    <button id="mobile-toggle" onclick="toggleMobileControls()">⚙️</button>
 
     <!-- Keyboard Help Overlay -->
     <div id="keyboard-help">
@@ -1113,6 +1652,13 @@
                 <div class="shortcut-row"><span class="shortcut-key">Shift+Tab</span><span class="shortcut-desc">Select previous aircraft</span></div>
                 <div class="shortcut-row"><span class="shortcut-key">Escape</span><span class="shortcut-desc">Deselect / Close panels</span></div>
                 <div class="shortcut-row"><span class="shortcut-key">F</span><span class="shortcut-desc">Follow selected aircraft</span></div>
+            </div>
+            <div class="shortcut-group">
+                <h3>Features</h3>
+                <div class="shortcut-row"><span class="shortcut-key">/</span><span class="shortcut-desc">Search aircraft</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">E</span><span class="shortcut-desc">Export panel</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">P</span><span class="shortcut-desc">Toggle airports</span></div>
+                <div class="shortcut-row"><span class="shortcut-key">N</span><span class="shortcut-desc">Toggle prediction lines</span></div>
             </div>
             <p class="close-hint">Press <strong>?</strong> or <strong>Escape</strong> to close</p>
         </div>
@@ -3467,6 +4013,11 @@
                 `${centerLat.toFixed(2)}, ${centerLon.toFixed(2)}`;
             loadMapTiles();
 
+            // Update airport markers for new location
+            if (showAirports) {
+                updateAirportMarkers();
+            }
+
             // Fetch new data
             fetchData();
         };
@@ -3759,6 +4310,12 @@
             // Mark cached array as dirty if planes were added/removed
             if (planesChanged) {
                 _airplanesArrayDirty = true;
+                // Apply active filters to new aircraft
+                if (searchQuery || filterAltitude || filterSpeed || filterType) {
+                    filterAircraft();
+                }
+                // Update search results count
+                document.getElementById('search-results-count').textContent = `${airplanes.size} shown`;
             }
         }
 
@@ -3956,40 +4513,76 @@
             // Clear canvas
             ctx.clearRect(0, 0, 256, 80);
 
-            if (currentTheme === 'retro') {
+            const isRetro = currentTheme === 'retro';
+            const isNight = currentTheme === 'night';
+
+            // Background with theme styling
+            if (isRetro) {
                 ctx.fillStyle = 'rgba(0, 20, 0, 0.9)';
                 ctx.strokeStyle = '#00ff00';
                 ctx.lineWidth = 2;
-            } else {
+            } else if (isNight) {
                 ctx.fillStyle = 'rgba(0, 20, 40, 0.85)';
+                ctx.strokeStyle = '#0088ff';
+                ctx.lineWidth = 1;
+            } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.strokeStyle = '#0066cc';
+                ctx.lineWidth = 1;
             }
             ctx.beginPath();
             ctx.roundRect(0, 0, 256, 80, 8);
             ctx.fill();
-            if (currentTheme === 'retro') ctx.stroke();
+            ctx.stroke();
 
-            ctx.fillStyle = currentTheme === 'retro' ? '#00ff00' : '#00ffff';
+            // Category icon (left side)
+            const category = plane.userData.category || 'jet';
+            const categoryIcons = {
+                'helicopter': '🚁',
+                'military': '🎖️',
+                'widebody': '🛫',
+                'small': '🛩️',
+                'regional': '🛩️',
+                'jet': '✈️'
+            };
+            ctx.font = '16px sans-serif';
+            ctx.fillText(categoryIcons[category] || '✈️', 8, 22);
+
+            // Emergency squawk indicator (right side)
+            const squawk = plane.userData.squawk || '';
+            if (['7500', '7600', '7700'].includes(squawk)) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('⚠️' + squawk, 248, 16);
+                ctx.textAlign = 'left';
+            }
+
+            // Callsign (main text)
+            ctx.fillStyle = isRetro ? '#00ff00' : (isNight ? '#00ffff' : '#0066cc');
             ctx.font = 'bold 22px monospace';
             const callsign = plane.userData.flight || plane.userData.hex || 'Unknown';
-            ctx.fillText(callsign.trim(), 10, 28);
+            ctx.fillText(callsign.trim(), 30, 28);
 
-            ctx.fillStyle = currentTheme === 'retro' ? '#00cc00' : '#88ff88';
+            // Altitude
+            ctx.fillStyle = isRetro ? '#00cc00' : (isNight ? '#88ff88' : '#006600');
             ctx.font = '16px monospace';
             ctx.fillText(formatAltitude(plane.userData.altitude || 0), 10, 50);
 
+            // Speed
             if (plane.userData.gs !== undefined && plane.userData.gs !== null) {
-                ctx.fillStyle = currentTheme === 'retro' ? '#00aa00' : '#ffaa00';
+                ctx.fillStyle = isRetro ? '#00aa00' : (isNight ? '#ffaa00' : '#cc6600');
                 ctx.fillText(formatSpeed(plane.userData.gs), 10, 70);
             }
 
             // Draw vertical speed arrow on the right side
             const arrowInfo = getVerticalSpeedArrow(plane.userData.baro_rate);
             if (arrowInfo) {
-                ctx.fillStyle = currentTheme === 'retro' ? '#00ff00' : arrowInfo.color;
+                ctx.fillStyle = isRetro ? '#00ff00' : arrowInfo.color;
                 ctx.font = `bold ${Math.round(arrowInfo.size)}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(arrowInfo.arrow, 230, 40);
+                ctx.fillText(arrowInfo.arrow, 230, 50);
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'alphabetic';
             }
@@ -4423,6 +5016,32 @@
             // Update follow mode
             updateFollowMode();
 
+            // Update cinematic camera follow
+            updateCinematicFollow();
+
+            // Update prediction lines for visible aircraft
+            if (showPrediction && (now % 500) < 100) {
+                for (const plane of _airplanesArray) {
+                    if (plane.visible) {
+                        updatePredictionLine(plane);
+                    }
+                }
+            }
+
+            // Check aircraft alerts (every 2 seconds)
+            if (alertsEnabled && (now % 2000) < 100) {
+                for (const plane of _airplanesArray) {
+                    checkAircraftAlerts(plane);
+                }
+            }
+
+            // Record flight history (every 5 seconds)
+            if ((now % 5000) < 100) {
+                for (const plane of _airplanesArray) {
+                    recordFlightHistory(plane);
+                }
+            }
+
             // Render only when needed (or throttle to max fps)
             if (_needsRender || now - _renderThrottleTime > RENDER_THROTTLE_MS) {
                 renderer.render(scene, camera);
@@ -4520,6 +5139,30 @@
                 // Follow selected aircraft
                 if (key === 'f' && selectedPlane) {
                     followSelectedPlane = !followSelectedPlane;
+                    e.preventDefault();
+                }
+
+                // Search/Filter shortcuts
+                if (key === '/' && !e.shiftKey) {
+                    document.getElementById('search-input').focus();
+                    e.preventDefault();
+                }
+
+                // Export shortcut
+                if (key === 'e' && !e.ctrlKey && !e.metaKey) {
+                    toggleExportPanel();
+                    e.preventDefault();
+                }
+
+                // Airport markers
+                if (key === 'p') {
+                    toggleAirports();
+                    e.preventDefault();
+                }
+
+                // Prediction lines
+                if (key === 'n') {
+                    togglePrediction();
                     e.preventDefault();
                 }
             });
@@ -4764,6 +5407,57 @@
                 </div>`
             ).join('');
             document.getElementById('top-aircraft-types').innerHTML = typesHtml || '<em>No data</em>';
+
+            // Update speed distribution
+            const speedBuckets = [0, 0, 0, 0]; // <150, 150-300, 300-450, >450
+            const categoryStats = new Map();
+
+            for (const plane of _airplanesArray) {
+                const speed = plane.userData.gs || 0;
+                const category = plane.userData.category || 'jet';
+
+                // Speed buckets
+                if (speed < 150) speedBuckets[0]++;
+                else if (speed < 300) speedBuckets[1]++;
+                else if (speed < 450) speedBuckets[2]++;
+                else speedBuckets[3]++;
+
+                // Category stats
+                categoryStats.set(category, (categoryStats.get(category) || 0) + 1);
+            }
+
+            // Update speed distribution bars
+            const maxSpeedBucket = Math.max(...speedBuckets, 1);
+            for (let i = 0; i < 4; i++) {
+                const el = document.getElementById(`spd-bar-${i}`);
+                const countEl = document.getElementById(`spd-count-${i}`);
+                if (el && countEl) {
+                    const pct = (speedBuckets[i] / maxSpeedBucket) * 100;
+                    el.style.width = pct + '%';
+                    countEl.textContent = speedBuckets[i];
+                }
+            }
+
+            // Update aircraft type chart
+            const categoryNames = {
+                'jet': 'Jets',
+                'widebody': 'Wide-body',
+                'regional': 'Regional',
+                'small': 'Small/GA',
+                'helicopter': 'Helicopters',
+                'military': 'Military'
+            };
+            const sortedCategories = Array.from(categoryStats.entries())
+                .sort((a, b) => b[1] - a[1]);
+            const categoryHtml = sortedCategories.map(([cat, count]) =>
+                `<div style="display:flex;justify-content:space-between;padding:2px 0;">
+                    <span>${categoryNames[cat] || cat}</span><span style="font-weight:bold;">${count}</span>
+                </div>`
+            ).join('');
+            const typeChartEl = document.getElementById('aircraft-type-chart');
+            if (typeChartEl) {
+                typeChartEl.innerHTML = categoryHtml || '<em>No data</em>';
+            }
 
             // Draw coverage heatmap
             drawCoverageHeatmap();
@@ -5030,6 +5724,730 @@
 
         // Extended createAirplane function is handled in original - add category info to userData
         // We'll modify the existing function to include category
+
+        // ===========================================
+        // FEATURE 1: AIRCRAFT SEARCH & FILTER
+        // ===========================================
+        let searchQuery = '';
+        let filterAltitude = '';
+        let filterSpeed = '';
+        let filterType = '';
+        let filteredAircraft = new Set(); // Hex codes of aircraft matching filters
+
+        window.toggleSearchPanel = function() {
+            const panel = document.getElementById('search-panel');
+            panel.classList.toggle('collapsed');
+        };
+
+        window.filterAircraft = function() {
+            searchQuery = document.getElementById('search-input').value.trim().toUpperCase();
+            filterAltitude = document.getElementById('filter-altitude').value;
+            filterSpeed = document.getElementById('filter-speed').value;
+            filterType = document.getElementById('filter-type').value;
+
+            filteredAircraft.clear();
+            let matchCount = 0;
+            let totalCount = 0;
+
+            for (const [hex, plane] of airplanes.entries()) {
+                totalCount++;
+                const data = plane.userData;
+                let matches = true;
+
+                // Search by callsign/hex
+                if (searchQuery) {
+                    const callsign = (data.flight || '').toUpperCase();
+                    const hexCode = (data.hex || '').toUpperCase();
+                    if (!callsign.includes(searchQuery) && !hexCode.includes(searchQuery)) {
+                        matches = false;
+                    }
+                }
+
+                // Filter by altitude
+                if (matches && filterAltitude) {
+                    const alt = data.altitude || 0;
+                    if (filterAltitude === '0-5000' && (alt < 0 || alt >= 5000)) matches = false;
+                    else if (filterAltitude === '5000-15000' && (alt < 5000 || alt >= 15000)) matches = false;
+                    else if (filterAltitude === '15000-30000' && (alt < 15000 || alt >= 30000)) matches = false;
+                    else if (filterAltitude === '30000-45000' && (alt < 30000 || alt >= 45000)) matches = false;
+                    else if (filterAltitude === '45000+' && alt < 45000) matches = false;
+                }
+
+                // Filter by speed
+                if (matches && filterSpeed) {
+                    const speed = data.gs || 0;
+                    if (filterSpeed === '0-150' && speed >= 150) matches = false;
+                    else if (filterSpeed === '150-300' && (speed < 150 || speed >= 300)) matches = false;
+                    else if (filterSpeed === '300-500' && (speed < 300 || speed >= 500)) matches = false;
+                    else if (filterSpeed === '500+' && speed < 500) matches = false;
+                }
+
+                // Filter by aircraft type
+                if (matches && filterType) {
+                    const category = data.category || 'jet';
+                    if (filterType !== category) matches = false;
+                }
+
+                // Apply visibility
+                plane.visible = matches;
+                if (plane.userData.trail) plane.userData.trail.visible = matches && trailEnabled;
+                if (plane.userData.altLine) plane.userData.altLine.visible = matches;
+                if (plane.userData.label) plane.userData.label.visible = matches && showLabels;
+                if (plane.userData.predictionLine) plane.userData.predictionLine.visible = matches && showPrediction;
+
+                if (matches) {
+                    filteredAircraft.add(hex);
+                    matchCount++;
+                }
+            }
+
+            document.getElementById('search-results-count').textContent =
+                (searchQuery || filterAltitude || filterSpeed || filterType)
+                    ? `${matchCount}/${totalCount}`
+                    : `${totalCount} shown`;
+
+            _needsRender = true;
+            updateLabels();
+        };
+
+        window.clearFilters = function() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-altitude').value = '';
+            document.getElementById('filter-speed').value = '';
+            document.getElementById('filter-type').value = '';
+            filterAircraft();
+        };
+
+        // ===========================================
+        // FEATURE 3: FLIGHT PATH PREDICTION
+        // ===========================================
+        let showPrediction = false;
+        const PREDICTION_MINUTES = 5; // Predict 5 minutes ahead
+
+        window.togglePrediction = function() {
+            showPrediction = !showPrediction;
+            document.getElementById('btn-prediction').classList.toggle('active', showPrediction);
+
+            // Update all prediction lines
+            for (const plane of airplanes.values()) {
+                if (showPrediction) {
+                    updatePredictionLine(plane);
+                } else if (plane.userData.predictionLine) {
+                    plane.userData.predictionLine.visible = false;
+                }
+            }
+            _needsRender = true;
+        };
+
+        function createPredictionLine(plane) {
+            if (plane.userData.predictionLine) return;
+
+            const isRetro = currentTheme === 'retro';
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(6); // Start and end points
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.LineDashedMaterial({
+                color: isRetro ? 0x00ffff : 0xff8800,
+                dashSize: 3,
+                gapSize: 2,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const line = new THREE.Line(geometry, material);
+            line.computeLineDistances();
+            line.visible = false;
+            scene.add(line);
+
+            plane.userData.predictionLine = line;
+        }
+
+        function updatePredictionLine(plane) {
+            if (!showPrediction) return;
+
+            const data = plane.userData;
+            if (!data.lat || !data.lon || !data.track || !data.gs) return;
+
+            // Create prediction line if doesn't exist
+            if (!plane.userData.predictionLine) {
+                createPredictionLine(plane);
+            }
+
+            const line = plane.userData.predictionLine;
+            const positions = line.geometry.attributes.position.array;
+
+            // Current position
+            const currentPos = latLonToXZ(data.lat, data.lon);
+            const currentAlt = (data.altitude || 0) * altitudeScale;
+
+            // Predict future position
+            const speedKts = data.gs || 0;
+            const speedNmPerMin = speedKts / 60;
+            const distanceNm = speedNmPerMin * PREDICTION_MINUTES;
+
+            // Convert track to radians (0 = North, clockwise)
+            const trackRad = (data.track || 0) * Math.PI / 180;
+
+            // Calculate lat/lon change
+            const latChange = distanceNm * Math.cos(trackRad) / 60; // 1 degree = 60 nm approx
+            const lonChange = distanceNm * Math.sin(trackRad) / (60 * Math.cos(data.lat * Math.PI / 180));
+
+            const futureLat = data.lat + latChange;
+            const futureLon = data.lon + lonChange;
+
+            // Account for vertical rate
+            const vertRate = data.baro_rate || 0; // ft/min
+            const altChange = vertRate * PREDICTION_MINUTES;
+            const futureAlt = Math.max(0, (data.altitude || 0) + altChange) * altitudeScale;
+
+            const futurePos = latLonToXZ(futureLat, futureLon);
+
+            // Update line geometry
+            positions[0] = currentPos.x;
+            positions[1] = currentAlt;
+            positions[2] = currentPos.z;
+            positions[3] = futurePos.x;
+            positions[4] = futureAlt;
+            positions[5] = futurePos.z;
+
+            line.geometry.attributes.position.needsUpdate = true;
+            line.computeLineDistances();
+            line.visible = true;
+        }
+
+        // ===========================================
+        // FEATURE 4: AIRCRAFT ALERTS
+        // ===========================================
+        let alertsEnabled = true;
+        let alertedAircraft = new Set(); // Track which aircraft have already triggered alerts
+        const ALERT_DURATION = 15000; // 15 seconds
+
+        window.toggleAlerts = function() {
+            alertsEnabled = !alertsEnabled;
+            document.getElementById('btn-alerts').classList.toggle('active', alertsEnabled);
+            if (!alertsEnabled) {
+                document.getElementById('alert-container').innerHTML = '';
+            }
+        };
+
+        function checkAircraftAlerts(plane) {
+            if (!alertsEnabled) return;
+
+            const data = plane.userData;
+            const hex = data.hex;
+            if (!hex || alertedAircraft.has(hex)) return;
+
+            let alertType = null;
+            let alertTitle = '';
+            let alertDetails = '';
+            let alertIcon = '';
+
+            // Emergency squawk codes
+            const squawk = data.squawk || '';
+            if (squawk === '7500') {
+                alertType = 'emergency';
+                alertIcon = '🚨';
+                alertTitle = 'HIJACK ALERT (7500)';
+                alertDetails = `${data.flight || hex} - Hijacking or unlawful interference`;
+            } else if (squawk === '7600') {
+                alertType = 'emergency';
+                alertIcon = '📻';
+                alertTitle = 'RADIO FAILURE (7600)';
+                alertDetails = `${data.flight || hex} - Communication failure`;
+            } else if (squawk === '7700') {
+                alertType = 'emergency';
+                alertIcon = '⚠️';
+                alertTitle = 'EMERGENCY (7700)';
+                alertDetails = `${data.flight || hex} - General emergency`;
+            }
+
+            // Military aircraft
+            if (!alertType && data.category === 'military') {
+                alertType = 'military';
+                alertIcon = '🎖️';
+                alertTitle = 'Military Aircraft';
+                alertDetails = `${data.flight || hex} - ${formatAltitude(data.altitude || 0)} @ ${formatSpeed(data.gs || 0)}`;
+            }
+
+            // Low altitude alert (below 1000ft and moving)
+            if (!alertType && data.altitude && data.altitude < 1000 && data.gs > 50) {
+                alertType = 'lowalt';
+                alertIcon = '⬇️';
+                alertTitle = 'Low Altitude Aircraft';
+                alertDetails = `${data.flight || hex} at ${formatAltitude(data.altitude)}`;
+            }
+
+            if (alertType) {
+                showAlert(alertType, alertIcon, alertTitle, alertDetails, hex);
+                alertedAircraft.add(hex);
+
+                // Remove from alerted set after delay to allow re-alerting
+                setTimeout(() => alertedAircraft.delete(hex), 60000);
+            }
+        }
+
+        function showAlert(type, icon, title, details, hex) {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert-notification alert-${type}`;
+            alert.innerHTML = `
+                <span class="alert-icon">${icon}</span>
+                <span class="alert-title">${title}</span>
+                <div class="alert-details">${details}</div>
+            `;
+
+            alert.onclick = () => {
+                // Select and follow the aircraft
+                const plane = airplanes.get(hex);
+                if (plane) {
+                    selectPlane(plane);
+                    followSelectedPlane = true;
+                }
+                alert.remove();
+            };
+
+            container.appendChild(alert);
+
+            // Auto-remove after duration
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, ALERT_DURATION);
+        }
+
+        // ===========================================
+        // FEATURE 6: AIRPORT MARKERS
+        // ===========================================
+        let showAirports = false;
+        let airportMarkers = [];
+        const nearbyAirports = new Map(); // Cached airports by location
+
+        // Major airports database (subset - can be expanded)
+        const AIRPORT_DATABASE = [
+            { icao: 'KJFK', iata: 'JFK', name: 'John F Kennedy Intl', lat: 40.6413, lon: -73.7781 },
+            { icao: 'KLAX', iata: 'LAX', name: 'Los Angeles Intl', lat: 33.9425, lon: -118.4081 },
+            { icao: 'KORD', iata: 'ORD', name: "Chicago O'Hare", lat: 41.9742, lon: -87.9073 },
+            { icao: 'KATL', iata: 'ATL', name: 'Hartsfield-Jackson Atlanta', lat: 33.6407, lon: -84.4277 },
+            { icao: 'KDFW', iata: 'DFW', name: 'Dallas/Fort Worth', lat: 32.8998, lon: -97.0403 },
+            { icao: 'KDEN', iata: 'DEN', name: 'Denver Intl', lat: 39.8561, lon: -104.6737 },
+            { icao: 'KSFO', iata: 'SFO', name: 'San Francisco Intl', lat: 37.6213, lon: -122.3790 },
+            { icao: 'KSEA', iata: 'SEA', name: 'Seattle-Tacoma', lat: 47.4502, lon: -122.3088 },
+            { icao: 'KMIA', iata: 'MIA', name: 'Miami Intl', lat: 25.7959, lon: -80.2870 },
+            { icao: 'KBOS', iata: 'BOS', name: 'Boston Logan', lat: 42.3656, lon: -71.0096 },
+            { icao: 'EGLL', iata: 'LHR', name: 'London Heathrow', lat: 51.4700, lon: -0.4543 },
+            { icao: 'EGKK', iata: 'LGW', name: 'London Gatwick', lat: 51.1537, lon: -0.1821 },
+            { icao: 'LFPG', iata: 'CDG', name: 'Paris Charles de Gaulle', lat: 49.0097, lon: 2.5479 },
+            { icao: 'EDDF', iata: 'FRA', name: 'Frankfurt', lat: 50.0379, lon: 8.5622 },
+            { icao: 'EHAM', iata: 'AMS', name: 'Amsterdam Schiphol', lat: 52.3105, lon: 4.7683 },
+            { icao: 'LEMD', iata: 'MAD', name: 'Madrid Barajas', lat: 40.4983, lon: -3.5676 },
+            { icao: 'RJTT', iata: 'HND', name: 'Tokyo Haneda', lat: 35.5494, lon: 139.7798 },
+            { icao: 'RJAA', iata: 'NRT', name: 'Tokyo Narita', lat: 35.7720, lon: 140.3929 },
+            { icao: 'VHHH', iata: 'HKG', name: 'Hong Kong Intl', lat: 22.3080, lon: 113.9185 },
+            { icao: 'WSSS', iata: 'SIN', name: 'Singapore Changi', lat: 1.3644, lon: 103.9915 },
+            { icao: 'OMDB', iata: 'DXB', name: 'Dubai Intl', lat: 25.2532, lon: 55.3657 },
+            { icao: 'YSSY', iata: 'SYD', name: 'Sydney Kingsford Smith', lat: -33.9399, lon: 151.1753 },
+            { icao: 'ZBAA', iata: 'PEK', name: 'Beijing Capital', lat: 40.0799, lon: 116.6031 },
+            { icao: 'ZSPD', iata: 'PVG', name: 'Shanghai Pudong', lat: 31.1443, lon: 121.8083 },
+            { icao: 'VIDP', iata: 'DEL', name: 'Indira Gandhi Intl', lat: 28.5562, lon: 77.1000 },
+            { icao: 'CYYZ', iata: 'YYZ', name: 'Toronto Pearson', lat: 43.6777, lon: -79.6248 },
+            { icao: 'CYMX', iata: 'YUL', name: 'Montreal Trudeau', lat: 45.4706, lon: -73.7408 },
+            { icao: 'SBGR', iata: 'GRU', name: 'Sao Paulo Guarulhos', lat: -23.4356, lon: -46.4731 },
+            { icao: 'MMMX', iata: 'MEX', name: 'Mexico City Intl', lat: 19.4363, lon: -99.0721 },
+        ];
+
+        window.toggleAirports = function() {
+            showAirports = !showAirports;
+            document.getElementById('btn-airports').classList.toggle('active', showAirports);
+
+            if (showAirports) {
+                updateAirportMarkers();
+            } else {
+                clearAirportMarkers();
+            }
+            _needsRender = true;
+        };
+
+        function clearAirportMarkers() {
+            for (const marker of airportMarkers) {
+                scene.remove(marker);
+                if (marker.userData.label) scene.remove(marker.userData.label);
+            }
+            airportMarkers = [];
+        }
+
+        function updateAirportMarkers() {
+            clearAirportMarkers();
+            if (!showAirports || !centerInitialized) return;
+
+            const isRetro = currentTheme === 'retro';
+
+            // Find airports within view radius
+            for (const airport of AIRPORT_DATABASE) {
+                const distance = haversineDistance(centerLat, centerLon, airport.lat, airport.lon);
+                if (distance <= viewRadius) {
+                    createAirportMarker(airport, isRetro);
+                }
+            }
+        }
+
+        function createAirportMarker(airport, isRetro) {
+            const pos = latLonToXZ(airport.lat, airport.lon);
+
+            // Create runway marker
+            const geometry = new THREE.BoxGeometry(4, 0.5, 15);
+            const material = new THREE.MeshBasicMaterial({
+                color: isRetro ? 0x00ff00 : 0x333333,
+                transparent: true,
+                opacity: 0.8
+            });
+            const marker = new THREE.Mesh(geometry, material);
+            marker.position.set(pos.x, 0.3, pos.z);
+            marker.userData = { airport: airport };
+            scene.add(marker);
+            airportMarkers.push(marker);
+
+            // Create label
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = isRetro ? '#00ff00' : '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(airport.iata, 128, 28);
+            ctx.font = '14px Arial';
+            ctx.fillText(airport.name.substring(0, 20), 128, 50);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({
+                map: texture,
+                transparent: true,
+                opacity: 0.9
+            });
+            const label = new THREE.Sprite(spriteMaterial);
+            label.scale.set(20, 5, 1);
+            label.position.set(pos.x, 5, pos.z);
+            scene.add(label);
+            marker.userData.label = label;
+            airportMarkers.push(label);
+        }
+
+        // Haversine distance in nautical miles
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 3440.065; // Earth's radius in nm
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // ===========================================
+        // FEATURE 10: EXPORT DATA
+        // ===========================================
+        let flightHistory = []; // Track all flights seen
+        const MAX_HISTORY = 1000;
+
+        window.toggleExportPanel = function() {
+            const panel = document.getElementById('export-panel');
+            panel.classList.toggle('visible');
+        };
+
+        window.exportToCSV = function() {
+            const rows = [['Hex', 'Callsign', 'Latitude', 'Longitude', 'Altitude (ft)', 'Speed (kts)', 'Track', 'Squawk', 'Type', 'Timestamp']];
+
+            for (const plane of airplanes.values()) {
+                const d = plane.userData;
+                rows.push([
+                    d.hex || '',
+                    d.flight || '',
+                    (d.lat || 0).toFixed(6),
+                    (d.lon || 0).toFixed(6),
+                    Math.round(d.altitude || 0),
+                    Math.round(d.gs || 0),
+                    Math.round(d.track || 0),
+                    d.squawk || '',
+                    d.category || '',
+                    new Date().toISOString()
+                ]);
+            }
+
+            const csv = rows.map(r => r.join(',')).join('\n');
+            downloadFile(csv, `flight-data-${Date.now()}.csv`, 'text/csv');
+            toggleExportPanel();
+        };
+
+        window.exportToJSON = function() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                location: { lat: viewLatitude, lon: viewLongitude, radius: viewRadius },
+                aircraft: []
+            };
+
+            for (const plane of airplanes.values()) {
+                const d = plane.userData;
+                data.aircraft.push({
+                    hex: d.hex,
+                    callsign: d.flight,
+                    position: { lat: d.lat, lon: d.lon },
+                    altitude: d.altitude,
+                    speed: d.gs,
+                    track: d.track,
+                    verticalRate: d.baro_rate,
+                    squawk: d.squawk,
+                    category: d.category,
+                    registration: d.registration
+                });
+            }
+
+            const json = JSON.stringify(data, null, 2);
+            downloadFile(json, `flight-data-${Date.now()}.json`, 'application/json');
+            toggleExportPanel();
+        };
+
+        window.exportFlightHistory = function() {
+            const data = {
+                exportTime: new Date().toISOString(),
+                totalFlights: flightHistory.length,
+                flights: flightHistory
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            downloadFile(json, `flight-history-${Date.now()}.json`, 'application/json');
+            toggleExportPanel();
+        };
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Track flights for history
+        function recordFlightHistory(plane) {
+            const d = plane.userData;
+            if (!d.hex) return;
+
+            // Check if already recorded recently
+            const existing = flightHistory.find(f => f.hex === d.hex && Date.now() - f.lastSeen < 60000);
+            if (existing) {
+                existing.lastSeen = Date.now();
+                existing.positions.push({ lat: d.lat, lon: d.lon, alt: d.altitude, time: Date.now() });
+                if (existing.positions.length > 100) existing.positions.shift();
+                return;
+            }
+
+            // New flight record
+            flightHistory.push({
+                hex: d.hex,
+                callsign: d.flight,
+                firstSeen: Date.now(),
+                lastSeen: Date.now(),
+                positions: [{ lat: d.lat, lon: d.lon, alt: d.altitude, time: Date.now() }],
+                maxAltitude: d.altitude || 0,
+                maxSpeed: d.gs || 0,
+                category: d.category
+            });
+
+            // Limit history size
+            if (flightHistory.length > MAX_HISTORY) {
+                flightHistory.shift();
+            }
+        }
+
+        // ===========================================
+        // FEATURE 12: CUSTOM MAP TILE LAYERS
+        // ===========================================
+        let customTileUrl = '';
+        const TILE_PRESETS = {
+            'osm': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'carto-dark': 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+            'carto-light': 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+            'stamen-terrain': 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.png',
+            'esri-sat': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        };
+
+        window.toggleTilePanel = function() {
+            const panel = document.getElementById('tile-layer-panel');
+            panel.classList.toggle('visible');
+        };
+
+        window.setTilePreset = function(preset) {
+            document.getElementById('custom-tile-url').value = TILE_PRESETS[preset] || '';
+        };
+
+        window.applyCustomTiles = function() {
+            customTileUrl = document.getElementById('custom-tile-url').value.trim();
+            if (customTileUrl) {
+                // Clear tile cache
+                tileCache.clear();
+                // Reload tiles with custom URL
+                loadMapTiles();
+            }
+            toggleTilePanel();
+        };
+
+        // Override getTileUrl when custom tiles are set
+        const originalGetTileUrl = getTileUrl;
+        function getCustomTileUrl(x, y, zoom) {
+            if (!customTileUrl) {
+                return originalGetTileUrl(x, y, zoom);
+            }
+
+            // Support both {z}/{x}/{y} and {zoom}/{x}/{y} placeholders
+            let url = customTileUrl
+                .replace('{z}', zoom)
+                .replace('{zoom}', zoom)
+                .replace('{x}', x)
+                .replace('{y}', y);
+
+            // Handle {s} subdomain placeholder
+            if (url.includes('{s}')) {
+                const subdomains = ['a', 'b', 'c'];
+                const subdomain = subdomains[Math.abs(x + y) % 3];
+                url = url.replace('{s}', subdomain);
+            }
+
+            return url;
+        }
+
+        // Monkey-patch getTileUrl
+        window.getTileUrl = getCustomTileUrl;
+
+        // ===========================================
+        // FEATURE 7: SMOOTH CAMERA FOLLOW (CINEMATIC)
+        // ===========================================
+        let cameraFollowMode = 'standard'; // 'standard', 'cinematic', 'orbit'
+        let cinematicAngle = 0;
+        let cinematicDistance = 80;
+        let cinematicHeight = 30;
+
+        function updateCinematicFollow() {
+            if (!followSelectedPlane || !selectedPlane || cameraFollowMode !== 'cinematic') return;
+
+            const plane = airplanes.get(selectedPlane.userData.hex);
+            if (!plane) return;
+
+            // Smooth orbit around aircraft
+            cinematicAngle += 0.005;
+            const targetX = plane.position.x + Math.sin(cinematicAngle) * cinematicDistance;
+            const targetZ = plane.position.z + Math.cos(cinematicAngle) * cinematicDistance;
+            const targetY = plane.position.y + cinematicHeight;
+
+            // Smooth interpolation
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (targetY - camera.position.y) * 0.05;
+            camera.position.z += (targetZ - camera.position.z) * 0.05;
+            camera.lookAt(plane.position);
+
+            _needsRender = true;
+        }
+
+        // ===========================================
+        // FEATURE 9: MOBILE CONTROLS
+        // ===========================================
+        let mobileControlsVisible = false;
+
+        window.toggleMobileControls = function() {
+            mobileControlsVisible = !mobileControlsVisible;
+            const controls = document.getElementById('controls');
+            const toggle = document.getElementById('mobile-toggle');
+
+            controls.classList.toggle('mobile-visible', mobileControlsVisible);
+            toggle.textContent = mobileControlsVisible ? '✖️' : '⚙️';
+        };
+
+        // Auto-hide mobile controls when clicking outside
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && mobileControlsVisible) {
+                const controls = document.getElementById('controls');
+                const toggle = document.getElementById('mobile-toggle');
+                if (!controls.contains(e.target) && e.target !== toggle) {
+                    toggleMobileControls();
+                }
+            }
+        });
+
+        // ===========================================
+        // FEATURE 8: IMPROVED LABELS
+        // ===========================================
+        // Enhanced label rendering with more info
+        function renderEnhancedLabel(ctx, plane) {
+            const canvas = ctx.canvas;
+            const isRetro = currentTheme === 'retro';
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Background
+            if (isRetro) {
+                ctx.fillStyle = 'rgba(0, 20, 0, 0.85)';
+            } else if (currentTheme === 'night') {
+                ctx.fillStyle = 'rgba(0, 20, 40, 0.85)';
+            } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            }
+            ctx.beginPath();
+            ctx.roundRect(2, 2, width - 4, height - 4, 8);
+            ctx.fill();
+
+            // Border
+            ctx.strokeStyle = isRetro ? '#00ff00' : (currentTheme === 'night' ? '#0088ff' : '#0066cc');
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Text color
+            ctx.fillStyle = isRetro ? '#00ff00' : (currentTheme === 'night' ? '#ffffff' : '#333333');
+
+            // Callsign (large, top)
+            const callsign = plane.userData.flight || plane.userData.hex || '?';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(callsign.trim(), width / 2, 35);
+
+            // Speed and altitude (bottom row)
+            const alt = formatAltitude(plane.userData.altitude || 0);
+            const speed = formatSpeed(plane.userData.gs || 0);
+            ctx.font = '18px Arial';
+            ctx.fillText(`${alt} | ${speed}`, width / 2, 60);
+
+            // Category indicator (small icon)
+            const category = plane.userData.category || 'jet';
+            const categoryIcons = {
+                'helicopter': '🚁',
+                'military': '🎖️',
+                'widebody': '🛫',
+                'small': '✈️',
+                'regional': '🛩️',
+                'jet': '✈️'
+            };
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(categoryIcons[category] || '✈️', 8, 22);
+
+            // Squawk alert indicator
+            const squawk = plane.userData.squawk || '';
+            if (['7500', '7600', '7700'].includes(squawk)) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText('⚠️ ' + squawk, width - 8, 22);
+            }
+        }
 
         // ===========================================
         // FOLLOW AIRCRAFT FEATURE

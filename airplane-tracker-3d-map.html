@@ -4685,19 +4685,22 @@
         // Camera controls
         function setupControls() {
             renderer.domElement.addEventListener('mousedown', (e) => {
-                // Middle mouse (button 1) = map pan drag
-                if (e.button === 1) {
+                // Left (0) or Middle (1) drag pans the map
+                if (e.button === 0 || e.button === 1) {
                     e.preventDefault();
                     isPanningMap = true;
                     previousMousePosition = { x: e.clientX, y: e.clientY };
                     return;
                 }
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
+                // Right (2) drag orbits camera (optional)
+                if (e.button === 2) {
+                    isDragging = true;
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
             });
 
             renderer.domElement.addEventListener('mousemove', (e) => {
-                // Map pan when middle mouse held
+                // Map pan when left/middle mouse held
                 if (isPanningMap) {
                     const deltaX = e.clientX - previousMousePosition.x;
                     const deltaY = e.clientY - previousMousePosition.y;
@@ -4718,19 +4721,26 @@
             });
             
             renderer.domElement.addEventListener('mouseup', (e) => {
-                if (e.button === 1) {
+                if (e.button === 0 || e.button === 1) {
                     isPanningMap = false;
-                } else {
+                }
+                if (e.button === 2) {
                     isDragging = false;
                 }
             });
             renderer.domElement.addEventListener('mouseleave', () => { isDragging = false; isPanningMap = false; });
 
             renderer.domElement.addEventListener('wheel', (e) => {
-                cameraDistance = Math.max(30, Math.min(500, cameraDistance + e.deltaY * 0.2));
-                updateCameraPosition();
+                e.preventDefault();
+                // When following aircraft, wheel adjusts follow zoom; otherwise zoom map
+                if (followSelectedPlane) {
+                    const factor = e.deltaY > 0 ? 1.1 : 0.9; // scroll down = out, up = in
+                    followZoom = Math.max(0.3, Math.min(5, followZoom * factor));
+                } else {
+                    if (e.deltaY < 0) mapZoomIn(); else mapZoomOut();
+                }
                 _needsRender = true;
-            });
+            }, { passive: false });
         }
 
         // Middle mouse drag → smooth map pan based on pixel delta
@@ -6376,8 +6386,13 @@
         // ===========================================
         let cameraFollowMode = 'standard'; // 'standard' (map-center only), 'chase', 'cockpit', 'cinematic'
         let cinematicAngle = 0;
-        let cinematicDistance = 80;
-        let cinematicHeight = 30;
+        const BASE_CINEMATIC_DISTANCE = 80;
+        const BASE_CINEMATIC_HEIGHT = 30;
+        const BASE_CHASE_DIST = 60;
+        const BASE_CHASE_HEIGHT = 20;
+        const BASE_COCKPIT_NOSE = 8;
+        const BASE_COCKPIT_HEIGHT = 3;
+        let followZoom = 1; // wheel-adjustable zoom for follow modes
 
         function updateFollowCamera() {
             if (!followSelectedPlane || !selectedPlane) return;
@@ -6390,8 +6405,8 @@
             const fwdX = Math.sin(t), fwdZ = -Math.cos(t);
 
             if (cameraFollowMode === 'chase') {
-                const dist = 60;
-                const height = 20;
+                const dist = BASE_CHASE_DIST * followZoom;
+                const height = BASE_CHASE_HEIGHT * followZoom;
                 const targetX = plane.position.x - fwdX * dist;
                 const targetZ = plane.position.z - fwdZ * dist;
                 const targetY = plane.position.y + height;
@@ -6402,8 +6417,8 @@
                 camera.lookAt(plane.position.x + fwdX * 20, plane.position.y, plane.position.z + fwdZ * 20);
                 _needsRender = true;
             } else if (cameraFollowMode === 'cockpit') {
-                const nose = 8; // forward offset from center
-                const height = 3; // slight upward offset
+                const nose = BASE_COCKPIT_NOSE * followZoom; // forward offset from center
+                const height = BASE_COCKPIT_HEIGHT * followZoom; // slight upward offset
                 const camX = plane.position.x + fwdX * nose;
                 const camZ = plane.position.z + fwdZ * nose;
                 const camY = plane.position.y + height;
@@ -6417,9 +6432,11 @@
             } else if (cameraFollowMode === 'cinematic') {
                 // Smooth orbit around aircraft
                 cinematicAngle += 0.005;
-                const targetX = plane.position.x + Math.sin(cinematicAngle) * cinematicDistance;
-                const targetZ = plane.position.z + Math.cos(cinematicAngle) * cinematicDistance;
-                const targetY = plane.position.y + cinematicHeight;
+                const dist = BASE_CINEMATIC_DISTANCE * followZoom;
+                const height = BASE_CINEMATIC_HEIGHT * followZoom;
+                const targetX = plane.position.x + Math.sin(cinematicAngle) * dist;
+                const targetZ = plane.position.z + Math.cos(cinematicAngle) * dist;
+                const targetY = plane.position.y + height;
 
                 camera.position.x += (targetX - camera.position.x) * 0.05;
                 camera.position.y += (targetY - camera.position.y) * 0.05;

@@ -85,6 +85,16 @@ ProxyPassReverse /dump1090/ http://localhost:8080/
 | Auto-rotate | Toggle automatic rotation |
 | Reset | Return to default view |
 
+#### New Controls
+
+- **Middle Mouse Drag**: Pan the map smoothly while dragging.
+- **Follow/View Modes**: Use buttons in the controls bar:
+   - **Follow**: Keep map centered on the selected aircraft.
+   - **Chase**: Camera follows behind the aircraft, looking forward.
+   - **Cockpit**: Camera sits near the nose, looking ahead along track.
+   - **Orbit**: Cinematic orbit around the selected aircraft.
+   - **Unfollow**: Return to manual camera.
+
 ### Settings Panel
 
 | Setting | Options |
